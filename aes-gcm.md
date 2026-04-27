@@ -5,11 +5,11 @@ Note: this forked-repo implementation uses init_value (IV) instead of nonce in t
 
 ## How It Works
 
-1. A subkey H is derived by encrypting a block of zeros with AES using your master key
+1. A subkey H (Hash subkey) is derived by encrypting a block of zeros with AES using your master key
 2. The plaintext is encrypted block by block using AES-CTR, starting at Counter value 2. (counter is 32 bit) Each block gets XORed with an AES-encrypted counter.
 3. A GHASH function runs over the ciphertext (and optional associated data) in GF(2¹²⁸), producing an authentication tag.
-4. The tag is finalised by XORing with AES(nonce || counter=1). Counter 1 was deliberately skipped during encryption and reserved for the tag.
-5. Durign decryption, the tag is authenticated and verified first before anything is decrypted. If the tag doesn't match, an `InvalidTagException` is raised.
+4. The auth_tag is finalised by XORing with AES(nonce || counter=1). Counter 1 was deliberately skipped during encryption and reserved for the auth_tag.
+5. During decryption, the auth_tag is verified first before anything is decrypted. If the tag doesn't match, an `InvalidTagException` is raised.
 
 ## Setup
 **Dependencies**
