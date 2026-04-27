@@ -23,6 +23,8 @@ Decrypt a ciphertext using the cipher, as well as a provided nonce:
 plaintext = cipher.decrypt(nonce, ciphertext)
 ```
 
+If the authentication tag is wrong, a `TagInvalidException` is raised.
+
 Note: all plaintexts, ciphertexts, keys and nonces are python byte strings.
 
 Sample usage code, also present in `test_chacha20poly1305.py`:
