@@ -3,7 +3,7 @@ AES-GCM (Galois/Counter Mode) is an AEAD algorithm. It combines AES-CTR for encr
 
 Note: this forked-repo implementation uses init_value (IV) instead of nonce in the code.
 
-# How It Works
+## How It Works
 
 1. A subkey H is derived by encrypting a block of zeros with AES using your master key
 2. The plaintext is encrypted block by block using AES-CTR, starting at Counter value 2. (counter is 32 bit) Each block gets XORed with an AES-encrypted counter.
@@ -11,15 +11,20 @@ Note: this forked-repo implementation uses init_value (IV) instead of nonce in t
 4. The tag is finalised by XORing with AES(nonce || counter=1). Counter 1 was deliberately skipped during encryption and reserved for the tag.
 5. Durign decryption, the tag is authenticated and verified first before anything is decrypted. If the tag doesn't match, an `InvalidTagException` is raised.
 
-# Setup
-
+## Setup
+**Dependencies**
+```bash
+pip3 install pycryptodome
+```
 Import and set key and nonce
 ```python
 from aes_gcm import AES_GCM
+from Crypto.Random.random import getrandbits
 #any 128-bit key
 master_key  = 0x00000000000000000000000000000000
-#any 96-bit nonce
-init_value  = 0x000000000000000000000000
+#any, randomly generated 96-bit nonce
+init_value = getrandbits(96)
+#aes-gcm code tracks the last used nonce and throws an `InvalidInputException` if reused
 ```
 
 Create a cipher object using a 128-bit integer key:
@@ -41,29 +46,40 @@ plaintext = my_gcm.decrypt(init_value, ciphertext, auth_tag, auth_data)
 Full Sample code, in `test_aes_gcm.py` too:
 ```python
 from aes_gcm import AES_GCM
+from Crypto.Random.random import getrandbits
 
 #128-bit key
-master_key  = 0x00000000000000000000000000000000
-#96-bit nonce
-init_value  = 0x000000000000000000000000
-auth_data   = b'hiya123c'
-plaintext   = b'ello cookie time!'
+master_key = 0x00000000000000000000000000000000
+#96-bit random nonce
+init_value = getrandbits(96)
+auth_data  = b'hiya123c'
+plaintext  = b'ello cookie time!'
 
 my_gcm = AES_GCM(master_key)
 ciphertext, auth_tag = my_gcm.encrypt(init_value, plaintext, auth_data)
 decrypted = my_gcm.decrypt(init_value, ciphertext, auth_tag, auth_data)
 
 print("Plaintext: ", plaintext)
-print("Ciphertext:", ciphertext.hex())
-print("Auth Tag:  ", hex(auth_tag))
+print("Ciphertext: ", ciphertext.hex())
+print("Auth Tag: ", hex(auth_tag))
 print("Decrypted: ", decrypted)
+
+#tag tampering test: shows failed authentication when auth_tag is changed
+print("\nTamper Test!!")
+try:
+    my_gcm2 = AES_GCM(master_key)
+    init_value2 = getrandbits(96)
+    ct, tag = my_gcm2.encrypt(init_value2, plaintext, auth_data)
+    my_gcm2.decrypt(init_value2, ct, tag + 1, auth_data) #tampered tag, tag + 1
+except Exception as e:
+    print("Tamper detected:", e)
 ```
 
 Output:
 ```
 Plaintext:  b'ello cookie time!'
-Ciphertext: 66e4b6a140d5ccfd9841a79905db931dd6
-Auth Tag:   0xe96f36717fe5e8e66992d9adfa1be974
+Ciphertext: <varies with random nonce>
+Auth Tag:   <varies with random nonce>
 Decrypted:  b'ello cookie time!'
 ```
 
