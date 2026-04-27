@@ -1,0 +1,9 @@
+MANIFEST.in
+README.md
+setup.py
+ocb/__init__.py
+ocb/aes.py
+pyocb.egg-info/PKG-INFO
+pyocb.egg-info/SOURCES.txt
+pyocb.egg-info/dependency_links.txt
+pyocb.egg-info/top_level.txt

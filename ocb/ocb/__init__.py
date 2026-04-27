@@ -120,12 +120,27 @@ References
         self.cipherBlockSize = cipher.getBlockSize()
         self.nonce = None
 
+    @staticmethod
+    def _to_bytearray(value, field_name):
+        """Normalize user input to bytearray for Python 2/3 compatibility."""
+        if isinstance(value, bytearray):
+            return bytearray(value)
+        if isinstance(value, (bytes, memoryview)):
+            return bytearray(value)
+        if isinstance(value, str):
+            return bytearray(value.encode('utf-8'))
+        try:
+            return bytearray(value)
+        except TypeError as exc:
+            raise TypeError(field_name + ' must be bytes-like or str') from exc
+
     def setNonce(self, nonce):
         """
         Configure nonce N for current OCB instance.
         Input: array of integers
         Lengths must be same as cipher block number
         """
+        nonce = self._to_bytearray(nonce, 'nonce')
         assert len(nonce) == self.cipherBlockSize
         self.nonce = nonce
 
@@ -135,6 +150,7 @@ References
         Input: array of integers
         Length must be 16, 24, 32 depending on keys size.
         """
+        key = self._to_bytearray(key, 'key')
         assert len(key) == self.cipherKeySize
         self.cipher.setKey(key)
 
@@ -182,6 +198,7 @@ References
             Output: header authentication tag, array of integers
 
         """
+        header = self._to_bytearray(header, 'header')
         assert len(header)
         assert self.cipherBlockSize
 
@@ -246,7 +263,11 @@ References
         will reset nonce so that it needs to be set to a fresh value.
         """
         assert self.cipherBlockSize
-        assert self.nonce
+        if self.nonce is None:
+            raise ValueError('Nonce is not set. Call setNonce() before encrypt().')
+
+        plaintext = self._to_bytearray(plaintext, 'plaintext')
+        header = self._to_bytearray(header, 'header')
 
         blocksize = self.cipherBlockSize
 
@@ -309,6 +330,12 @@ References
 
     def decrypt(self, header, ciphertext, tag):
         assert self.cipherBlockSize
+        if self.nonce is None:
+            raise ValueError('Nonce is not set. Call setNonce() before decrypt().')
+
+        header = self._to_bytearray(header, 'header')
+        ciphertext = self._to_bytearray(ciphertext, 'ciphertext')
+        tag = self._to_bytearray(tag, 'tag')
 
         blocksize = self.cipherBlockSize
 
