@@ -48,6 +48,6 @@ The class intentionally sets `self.nonce = None` after `encrypt()`. So if you en
 
 1. OCB treats each 16-byte block in the message as a value in $GF(2^n)$, which is often combined with XOR `^` (bitwise addition)
 2. An offset is derived from nonce $N$, which is used in tandem to multiply each block by 2 via `times2()`. To prevent the field from overflowing, we conduct a XOR.
-- Afterwards, for each message block we offset it before AES encryption.
-- As part of the authentication tag, OCB maintains a running Checksum over the plaintext blocks. Final tag is computed from Checksum + Final Offset via AES (and XOR-ed with PMAC of header, if a header exists).
+3. Afterwards, for each message block we offset it before AES encryption.
+4. As part of the authentication tag, OCB maintains a running Checksum over the plaintext blocks. Final tag is computed from Checksum + Final Offset via AES (and XOR-ed with PMAC of header, if a header exists).
 
