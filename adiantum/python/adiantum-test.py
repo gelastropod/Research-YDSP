@@ -13,7 +13,7 @@ key = os.urandom(32)
 tweak = os.urandom(12)
 
 #plaintext (must be at least 16 bytes!)
-plaintext = b'adiantum adiantum adiantum'
+plaintext = b'something maybe 16 bytes'
 
 ciphertext = cipher.encrypt(plaintext, key=key, tweak=tweak)
 print("Plaintext: ", plaintext)

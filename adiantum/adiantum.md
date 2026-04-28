@@ -55,7 +55,7 @@ cipher.variant = list(cipher.variants())[0]
 
 key      = os.urandom(32)
 tweak    = os.urandom(12)
-plaintext = b'Hello Adiantum!!'  # must be at least 16 bytes
+plaintext = b'something maybe 16 bytes' #at least 16 bytes
 
 ciphertext = cipher.encrypt(plaintext, key=key, tweak=tweak)
 decrypted  = cipher.decrypt(bytes(ciphertext), key=key, tweak=tweak)
@@ -64,7 +64,7 @@ print("Plaintext: ", plaintext)
 print("Ciphertext:", bytes(ciphertext).hex())
 print("Decrypted: ", bytes(decrypted))
 
-# tamper test: shows garbled output instead of exception
+#tamper test
 print("\nTamper Test!!")
 tampered = bytearray(ciphertext)
 tampered[0] ^= 0xFF  # flip bits in first byte
