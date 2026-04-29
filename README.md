@@ -19,4 +19,4 @@
 [AES-GCM](aes_gcm/aes-gcm.md)
 
 [Adiantum](adiantum/adiantum.md)
-- Dependency: `pip install pycryptodome`
+- Dependency: `pip install pycryptodomex`

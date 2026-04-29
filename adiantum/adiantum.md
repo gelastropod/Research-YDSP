@@ -15,7 +15,7 @@ Note: Adiantum is **not a traditional AEAD**, it does not have authentication ta
 ## Setup
 **Dependencies**
 ```bash
-pip3 install pycryptodome
+pip3 install pycryptodomex
 ```
 All other dependencies (`hbsh.py`, `nh.py`, `poly1305.py`, etc.) are included in the forked repo. Run from inside the `python/` folder.
 
