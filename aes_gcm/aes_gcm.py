@@ -62,6 +62,7 @@ class AES_GCM:
         if master_key >= (1 << 128):
             raise InvalidInputException('Master key should be 128-bit')
 
+        #1st: generate Hash Subkey H
         self.__master_key = long_to_bytes(master_key, 16)
         self.__aes_ecb = AES.new(self.__master_key, AES.MODE_ECB)
         self.__auth_key = bytes_to_long(self.__aes_ecb.encrypt(b'\x00' * 16))
@@ -98,6 +99,7 @@ class AES_GCM:
         else:
             data += txt + b'\x00' * (16 - len_txt % 16)
 
+        #3rd: ghash part
         tag = 0
         assert len(data) % 16 == 0
         for i in range(len(data) // 16):
@@ -121,6 +123,7 @@ class AES_GCM:
         # len_auth_data = len(auth_data)
 
         if len_plaintext > 0:
+            #2nd: encrypt plain
             counter = Counter.new(
                 nbits=32,
                 prefix=long_to_bytes(init_value, 12),
@@ -138,6 +141,7 @@ class AES_GCM:
         else:
             ciphertext = b''
 
+        #4th: compute the tag
         auth_tag = self.__ghash(auth_data, ciphertext)
         # print 'GHASH\t', hex(auth_tag)
         auth_tag ^= bytes_to_long(self.__aes_ecb.encrypt(
