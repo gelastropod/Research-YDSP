@@ -1,53 +1,48 @@
-# OCB-AES Quick Guide
+# AES-OCB Quick Guide (PyCryptodome)
 
-**OCB mode with AES-128**, which is an authenticated encryption with a tag $T$ to provide integrity and authenticity.
+```bash
+pip install pycryptodome
+```
 
-As the original repo is Python 2 and has outdated syntax, this Python 3-safe fork accepts **bytes-like inputs** and normalises internally. Common safe inputs:
-- `bytes`
-- `bytearray`
-- hex converted with `bytearray.fromhex(...)`
+This document shows usage of AES in OCB mode via PyCryptodome (`Crypto.Cipher.AES`).
 
 ## Import and Setup
 
 ```python
-from ocb.aes import AES
-from ocb.__init__ import OCB
+from Crypto.Cipher import AES
 
-key = bytearray.fromhex("000102030405060708090A0B0C0D0E0F")
-nonce = bytearray.fromhex("000102030405060708090A0B0C0D0E0F")
+# 128-bit AES key (example)
+key = bytes.fromhex('000102030405060708090A0B0C0D0E0F')
 
-aes = AES(128)
-ocb = OCB(aes)
-ocb.setKey(key)
-ocb.setNonce(nonce)
+# 12- or 15-byte nonces are commonly used; follow your protocol's requirements
+nonce = bytes.fromhex('000102030405060708090A0B0C0D0E0F')
+cipher = AES.new(key, AES.MODE_OCB, nonce=nonce)
 ```
 
 ## Encrypt and Decrypt
 
 ```python
-plaintext = b"This is a secret message"
-header = b"john.doe@example.com"
+header = b"Recipient: john.doe@example.com"
+plaintext = b"The Magic Words are Squeamish Ossifrage"
 
-tag, ciphertext = ocb.encrypt(plaintext, header)
-ocb.setNonce(nonce)
-is_authentic, recovered = ocb.decrypt(header, ciphertext, tag)
+cipher.update(header)                      # set associated data (AAD)
+ciphertext, tag = cipher.encrypt_and_digest(plaintext)
 
-print(is_authentic)
-# True when tag matches
-print(recovered)
-# bytearray(b"This is a secret message")
+# To decrypt, create a fresh cipher with same key and nonce and call:
+dec = AES.new(key, AES.MODE_OCB, nonce=nonce)
+dec.update(header)
+try:
+	recovered = dec.decrypt_and_verify(ciphertext, tag)
+	print(recovered.decode())
+except ValueError:
+	print("Decryption failed or authentication failed")
 ```
 
-## Nonce Rule
+## Notes
 
-Never reuse the same key + nonce pair for different messages in real systems
+- OCB provides authenticity and confidentiality in one pass.
+- Always use a unique nonce per key in real systems.
+- PyCryptodome's `encrypt_and_digest` returns `(ciphertext, tag)` and `decrypt_and_verify` raises ``ValueError`` on failure.
 
-The class intentionally sets `self.nonce = None` after `encrypt()`. So if you encrypt then decrypt with the same object, you must call `setNonce()` again.
 
-## Lift up the Hood :)
-
-1. OCB treats each 16-byte block in the message as a value in $GF(2^n)$, which is often combined with XOR `^` (bitwise addition)
-2. An offset is derived from nonce $N$, which is used in tandem to multiply each block by 2 via `times2()`. To prevent the field from overflowing, we conduct a XOR.
-3. Afterwards, for each message block we offset it before AES encryption.
-4. As part of the authentication tag, OCB maintains a running Checksum over the plaintext blocks. Final tag is computed from Checksum + Final Offset via AES (and XOR-ed with PMAC of header, if a header exists).
 
