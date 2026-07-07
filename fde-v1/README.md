@@ -68,28 +68,19 @@ pip install -r requirements.txt
 
 ```bash
 python experiments.py
+python asserts.py
 ```
 
-Expected qualitative result:
+Expected results:
 
-- Sector-scoped ratcheting decrypts LBA 3 directly.
-- Global ratcheting fails to decrypt LBA 3 directly unless all previous sectors are processed.
-- Flipping one ciphertext byte corrupts multiple downstream plaintext blocks, but this is **not authentication**.
+- Sector-scoped ratcheting decrypts LBA 3 directly
+- Global ratcheting fails to decrypt LBA 3 directly unless all previous sectors are processed
+- Flipping one ciphertext byte corrupts multiple downstream plaintext blocks
 
 ## Research limitations
 
 This code deliberately omits:
 
-- XTS ciphertext stealing.
-- real disk I/O.
-- metadata crash consistency.
-- authentication/integrity.
-- hardware key isolation.
-- secure deletion and replay protection.
-
-The prototype is meant to generate experiments for a research report, especially:
-
-1. corruption propagation vs random-access cost,
-2. key-compromise models,
-3. sector-local vs cross-sector ratcheting,
-4. performance overhead relative to a non-ratcheted baseline.
+- ciphertext stealing
+- real disk I/O
+- authentication/integrity
