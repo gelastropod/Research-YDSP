@@ -1,0 +1,10 @@
+[sector] ciphertext length: 256 bytes
+[sector] decryption correctness: True
+[sector] corrupted 16-byte blocks after flipping byte 0: 4
+[global] ciphertext length: 256 bytes
+[global] decryption correctness: True
+[global] corrupted 16-byte blocks after flipping byte 0: 16
+[sector] direct decryption of LBA 3: True
+[global] direct decryption of LBA 3 without previous state: False
+[timing] sector scope 1000 encrypt+decrypt cycles: 2.0474 s
+[timing] global scope 1000 encrypt+decrypt cycles: 1.9996 s
