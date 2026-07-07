@@ -1,34 +1,22 @@
-# Ratcheted FDE Demo
+# Ratcheted FDE V1 demo
 
-This repository is a **research prototype**, not production cryptography.
-
-It models the research question:
-
-> Can ciphertext-dependent ratcheting be added to a full-disk-encryption-like construction while preserving enough random access to remain usable?
+Can ciphertext-dependent ratcheting be added to a full-disk-encryption (FDE)-esque construction, while preserving enough random access to remain usable?
 
 ## Construction
 
 For each 128-bit block:
 
-\[
-C_i = AES_{K_i}(P_i \oplus T_i) \oplus T_i
-\]
-
-\[
-T_{i+1} = F_{K_F}(C_i) = AES_{K_F}(C_i)
-\]
-
-\[
-K_{i+1} = G_{K_G}(K_i \oplus C_i) = AES_{K_G}(K_i \oplus C_i)
-\]
+$$C_i = AES_{K_i}(P_i \oplus T_i) \oplus T_i \\
+T_{i+1} = F_{K_F}(C_i) = AES_{K_F}(C_i) \\
+K_{i+1} = G_{K_G}(K_i \oplus C_i) = AES_{K_G}(K_i \oplus C_i)$$
 
 Key separation is explicit:
 
-- `K_i` is the evolving data-encryption key state.
-- `K_F` is the fixed secret key for the tweak-ratchet permutation.
-- `K_G` is the fixed secret key for the key-ratchet permutation.
+- $K_i$ is the evolving data-encryption key state.
+- $K_F$ is the fixed secret key for the tweak-ratchet permutation.
+- $K_G$ is the fixed secret key for the key-ratchet permutation.
 
-`K_i` is **not** reused as the key for `F` or `G`. It is input data to `G`.
+$K_i$ is **not** reused as the key for `F` or `G`. It is input data to `G`.
 
 ## Two scopes
 
@@ -36,17 +24,17 @@ Key separation is explicit:
 
 Each sector starts from a deterministic initial state based on its LBA.
 
-- Preserves sector-level random access.
-- Tamper propagation stays inside the sector.
-- More compatible with FDE.
+- Preserves sector-level random access
+- Tamper propagation stays inside the sector
+- More compatible with FDE
 
 ### 2. Global ratchet
 
 The final state of sector \(i\) becomes the initial state of sector \(i+1\).
 
-- A change in an early sector affects all later sectors.
-- Direct random access is lost.
-- Useful as a negative-control experiment.
+- A change in an early sector affects all later sectors
+- Direct random access is lost
+- Useful as a negative-control experiment
 
 ## Install
 
