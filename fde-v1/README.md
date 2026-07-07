@@ -6,9 +6,9 @@ Can ciphertext-dependent ratcheting be added to a full-disk-encryption (FDE)-esq
 
 For each 128-bit block:
 
-$$C_i = AES_{K_i}(P_i \oplus T_i) \oplus T_i \\
-T_{i+1} = F_{K_F}(C_i) = AES_{K_F}(C_i) \\
-K_{i+1} = G_{K_G}(K_i \oplus C_i) = AES_{K_G}(K_i \oplus C_i)$$
+$$C_i = AES_{K_i}(P_i \oplus T_i) \oplus T_i$$
+$$T_{i+1} = F_{K_F}(C_i) = AES_{K_F}(C_i)$$
+$$K_{i+1} = G_{K_G}(K_i \oplus C_i) = AES_{K_G}(K_i \oplus C_i)$$
 
 Key separation is explicit:
 
