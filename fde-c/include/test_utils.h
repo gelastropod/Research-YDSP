@@ -3,7 +3,9 @@
 
 #include <stddef.h>
 
-void hex_to_bytes(const char* hex, unsigned char* out, size_t out_len);
-void bytes_to_hex(const unsigned char* bytes, char* out, size_t out_len);
+#include "common.h"
+
+void hex_to_bytes(const char* hex, byte* out, size_t out_len);
+void bytes_to_hex(const byte* bytes, char* out, size_t out_len);
 
 #endif

@@ -1,15 +1,13 @@
-#include <mbedtls/aes.h>
-#include <string.h>
 #include <stdio.h>
 
 #include "test_utils.h"
 #include "primitives.h"
 
 int main() {
-	unsigned char key[16];
-	unsigned char in[16];
-	unsigned char out[16];
-	unsigned char re_in[16];
+	byte key[16];
+	byte in[16];
+	byte out[16];
+	byte re_in[16];
 
 	char key_string[33] = "e952be5248628ff1b75ddeb7a56b17ed";
 	char in_string[33] = "746772676f6f6e747265617061626364";
