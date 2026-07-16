@@ -1,0 +1,113 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\tests\\testlib.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:tests\\testlib.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\src\\primitives.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\primitives.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\include\\primitives.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:include\\primitives.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\include\\test_utils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:include\\test_utils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\src\\test_utils.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\test_utils.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "primitives.c",
+              "DocumentMoniker": "C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\src\\primitives.c",
+              "RelativeDocumentMoniker": "src\\primitives.c",
+              "ToolTip": "C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\src\\primitives.c",
+              "RelativeToolTip": "src\\primitives.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-07-15T14:49:21.567Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "primitives.h",
+              "DocumentMoniker": "C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\include\\primitives.h",
+              "RelativeDocumentMoniker": "include\\primitives.h",
+              "ToolTip": "C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\include\\primitives.h",
+              "RelativeToolTip": "include\\primitives.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAABiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-07-15T14:49:11.595Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "test_utils.c",
+              "DocumentMoniker": "C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\src\\test_utils.c",
+              "RelativeDocumentMoniker": "src\\test_utils.c",
+              "ToolTip": "C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\src\\test_utils.c",
+              "RelativeToolTip": "src\\test_utils.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-07-15T14:48:26.349Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "test_utils.h",
+              "DocumentMoniker": "C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\include\\test_utils.h",
+              "RelativeDocumentMoniker": "include\\test_utils.h",
+              "ToolTip": "C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\include\\test_utils.h",
+              "RelativeToolTip": "include\\test_utils.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-07-15T14:43:43.316Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "testlib.c",
+              "DocumentMoniker": "C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\tests\\testlib.c",
+              "RelativeDocumentMoniker": "tests\\testlib.c",
+              "ToolTip": "C:\\Users\\hooja\\OneDrive\\Desktop\\Research-YDSP\\fde-c\\tests\\testlib.c",
+              "RelativeToolTip": "tests\\testlib.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2026-07-14T05:22:50.433Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -6,3 +6,4 @@ core
 *~
 *.pyc
 .DS_Store
+fde-c/include/mbedtls
