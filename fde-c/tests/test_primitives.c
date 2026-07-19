@@ -5,30 +5,40 @@
 
 int main() {
 	byte key[16];
-	byte in[16];
-	byte out[16];
-	byte re_in[16];
+	byte plaintext[16];
+	byte ciphertext[16];
+	byte re_plaintext[16];
 
 	char key_string[33] = "e952be5248628ff1b75ddeb7a56b17ed";
-	char in_string[33] = "746772676f6f6e747265617061626364";
-	char out_string[33];
-	char re_in_string[33];
+	char plaintext_string[33] = "7cda46586f7b1393c0ad428ca36712f1";
+	char ciphertext_string[33];
+	char re_plaintext_string[33];
+
+	int result;
 
 	printf("Key used: %s\n", key_string);
-	printf("Plaintext used: %s\n", in_string);
+	printf("Plaintext used: %s\n", plaintext_string);
 
 	hex_to_bytes(key_string, key, 16);
-	hex_to_bytes(in_string, in, 16);
+	hex_to_bytes(plaintext_string, plaintext, 16);
 
-	aes_block_encrypt(key, in, out, 16);
-	bytes_to_hex(out, out_string, 16);
+	result = aes_block_encrypt(key, plaintext, ciphertext, 16);
+	if (result != 0) {
+		printf("Error in aes_block_encrypt: %d\n", result);
+		return -1;
+	}
+	bytes_to_hex(ciphertext, ciphertext_string, 16);
 	
-	printf("Ciphertext: %s\n", out_string);
+	printf("Ciphertext: %s\n", ciphertext_string);
 
-	aes_block_decrypt(key, out, re_in, 16);
-	bytes_to_hex(re_in, re_in_string, 16);
+	result = aes_block_decrypt(key, ciphertext, re_plaintext, 16);
+	if (result != 0) {
+		printf("Error in aes_block_decrypt: %d\n", result);
+		return -1;
+	}
+	bytes_to_hex(re_plaintext, re_plaintext_string, 16);
 
-	printf("Decoded plaintext: %s\n", re_in_string);
+	printf("Decrypted plaintext: %s\n", re_plaintext_string);
 
 	return 0;
 }
