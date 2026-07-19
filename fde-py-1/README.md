@@ -20,12 +20,10 @@ $$
 
 It then updates the internal state from the ciphertext:
 
-$$
-T_{i+1}   = AES(K_F,C_i) \\
-K_{i+1,L} = AES(K_{G,L}, K_{i,L} \oplus C_i) \\
-K_{i+1,R} = AES(K_{G,R}, K_{i,R} \oplus C_i) \\
-K_{i+1}   = K_{i+1,L} || K_{i+1,R}
-$$
+$$T_{i+1}   = AES(K_F,C_i)$$ \\$$
+$$K_{i+1,L} = AES(K_{G,L}, K_{i,L} \oplus C_i)$$
+$$K_{i+1,R} = AES(K_{G,R}, K_{i,R} \oplus C_i)$$
+$$K_{i+1}   = K_{i+1,L} || K_{i+1,R}$$
 
 $K_i$ is input data to $G$, it is never reused as the key of $F$ or $G$. The LBA provides the initial 16-byte XTS tweak. Later ratcheted tweaks are secret internal state rather than public TBC tweaks.
 
@@ -53,10 +51,10 @@ The construction remains no-expansion: plaintext and ciphertext lengths are equa
 
 ## Files
 
-- `ratchet_fde.py` — AES-XTS baseline and ratcheted construction.
-- `test_functionality.py` — assert-based checks with coloured expected/actual output.
-- `benchmark.py` — repeated timing, mean/median/stdev, throughput, ratios, and component profiling.
-- `requirements.txt` — Python dependency.
+- `requirements.txt` - Python dependencies
+- `ratchet_fde.py` - AES-XTS baseline and ratchet
+- `test_functionality.py` - assert-based functionality checks
+- `benchmark.py` - repeated timing, mean/median/stdev, throughput, ratios, and component profiling
 
 ## Setup
 
