@@ -2,14 +2,14 @@
 
 #include <mbedtls/aes.h>
 
-void xor_bytes(const byte* a, const byte* b, byte* out, size_t length) {
+void xor_bytes(const byte* a, const byte* b, byte* out, uint32_t length) {
 	for (size_t i = 0; i < length; i++) {
 		out[i] = a[i] ^ b[i];
 	}
 }
 
 // Maybe inefficient to init context every time?
-int aes_block_encrypt(const byte* key, const byte* block, byte* out, size_t key_length) {
+int aes_block_encrypt(const byte* key, const byte* block, byte* out, uint32_t key_length) {
 	mbedtls_aes_context ctx;
 	int result;
 
@@ -27,7 +27,7 @@ int aes_block_encrypt(const byte* key, const byte* block, byte* out, size_t key_
 	return 0;
 }
 
-int aes_block_decrypt(const byte* key, const byte* block, byte* out, size_t key_length) {
+int aes_block_decrypt(const byte* key, const byte* block, byte* out, uint32_t key_length) {
 	mbedtls_aes_context ctx;
 	int result;
 

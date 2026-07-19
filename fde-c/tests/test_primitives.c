@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "test_utils.h"
 #include "primitives.h"
@@ -39,6 +40,15 @@ int main() {
 	bytes_to_hex(re_plaintext, re_plaintext_string, 16);
 
 	printf("Decrypted plaintext: %s\n", re_plaintext_string);
+	printf("\n");
+
+	if (memcmp(plaintext, re_plaintext, 16) == 0) {
+		printf("Roundtrip matches original plaintext\n");
+	}
+	else {
+		printf("Roundtrip does NOT match original plaintext\n");
+		return -1;
+	}
 
 	return 0;
 }

@@ -2,7 +2,10 @@
 #define COMMON_H
 
 #include <stddef.h>
+#include <stdint.h>
 
-typedef unsigned char byte;
+#define BLOCK_SIZE 16
+
+typedef uint8_t byte;
 
 #endif

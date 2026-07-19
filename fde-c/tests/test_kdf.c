@@ -5,9 +5,7 @@
 
 int main() {
 	byte key[16];
-	byte key_0[16];
-	byte key_F[16];
-	byte key_G[16];
+	byte key_0[16], key_F[16], key_G[16];
 
 	char key_string[33] = "e952be5248628ff1b75ddeb7a56b17ed";
 	char key_0_string[33];

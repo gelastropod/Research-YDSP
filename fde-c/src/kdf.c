@@ -4,7 +4,7 @@
 
 static const unsigned char kdf_info[] = "ratcheted-fde-demo:c:key-separation";
 
-int expand_master_key(const byte* master_key, byte* key_0, byte* key_F, byte* key_G, size_t key_length) {
+int expand_master_key(const byte* master_key, byte* key_0, byte* key_F, byte* key_G, uint32_t key_length) {
 	const mbedtls_md_info_t* sha256_info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
 	if (sha256_info == NULL) {
 		return -1;
