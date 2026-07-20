@@ -35,6 +35,14 @@ make clean
 
 ## Running tests
 
+Use `scripts/run.sh` with whatever test you want to use. For example:
+
 ```bash
-./build/testlib
+scripts/run.sh test_primitives test_runtime
 ```
+
+## Results
+
+### test_runtime
+
+No significant differences between runtime for sector-scope and global-scope ratcheting found.
