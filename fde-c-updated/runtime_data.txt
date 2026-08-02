@@ -1,0 +1,10 @@
+Plaintext length: 16384 bytes (64 sectors x 256 bytes)
+AES 10000 encrypt+decrypt cycles: 0.8410 s
+AES-XTS 10000 encrypt+decrypt cycles: 0.5285 s
+AES-XEX Sector scope 10000 encrypt+decrypt cycles: 3.8566 s
+AES-XEX Global scope 10000 encrypt+decrypt cycles: 3.8828 s
+
+AES average per cycle: 0.084101 ms
+AES-XTS average per cycle: 0.052851 ms
+AES-XEX Sector scope average per cycle: 0.385662 ms
+AES-XEX Global scope average per cycle: 0.388276 ms
