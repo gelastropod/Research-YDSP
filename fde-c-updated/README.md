@@ -20,6 +20,7 @@ Other directories:
 - `obj/`: Local directory created by `make` for object files
 - `build/`: Local directory created by `make` for output binaries
 - `scripts/`: Bash scripts for testing code
+- `dep/`: Deprecated source and header files
 
 ## Building
 
