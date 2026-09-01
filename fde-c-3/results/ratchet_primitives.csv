@@ -1,0 +1,3 @@
+primitive,iterations,input_bytes,output_state_bytes,total_ns,ns_per_update,tsc_cycles_per_update
+AES-256(KG,KxorC),1000000,16,16,16206837,16.206837,61.467698
+BLAKE3(KconcatC),1000000,48,32,96869995,96.869995,367.396464
