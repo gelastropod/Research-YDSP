@@ -1,0 +1,11 @@
+captured_utc=2026-09-01T13:02:43Z
+uname=Linux pod 6.14.0-119037-tuxedo #37~24.04.1tux1 SMP PREEMPT_DYNAMIC Thu Dec 11 18:08:21 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+logical_cpus=16
+compiler=cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+openssl=OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)
+architecture=x86_64
+reported_cpus=16
+cpu_model=AMD Ryzen 7 8845HS w/ Radeon 780M Graphics
+l1d_cache=256 KiB (8 instances)
+l2_cache=8 MiB (8 instances)
+l3_cache=16 MiB (1 instance)
