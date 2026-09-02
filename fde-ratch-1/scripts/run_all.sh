@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+set -eu
+
+project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$project_dir"
+
+make clean
+make test
+make sanitize
+make clean
+make all
+./scripts/capture_environment.sh results
+./build/fde_bench --all results
+python3 scripts/plot_results.py results figures
+
+printf 'Tests, benchmarks, and figures completed successfully.\n'

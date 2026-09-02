@@ -1,0 +1,13 @@
+captured_utc=2026-09-02T15:44:18Z
+uname=Linux localhost 6.18.35 #1 SMP Mon Aug 31 18:10:37 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+logical_cpus=9
+compiler=cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
+openssl=OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)
+cpu_aes_instruction_flag=present
+cpu_sha_instruction_flag=present
+architecture=x86_64
+reported_cpus=9
+cpu_model=AMD EPYC 9V74 80-Core Processor
+l1d_cache=160 KiB (5 instances)
+l2_cache=5 MiB (5 instances)
+l3_cache=32 MiB (1 instance)

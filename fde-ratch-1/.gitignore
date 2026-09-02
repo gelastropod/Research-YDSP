@@ -1,0 +1,6 @@
+/build/
+/results_quick/
+/results_*/
+/figures_*/
+*.o
+*.dSYM/

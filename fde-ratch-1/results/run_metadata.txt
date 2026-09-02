@@ -1,0 +1,6 @@
+benchmark_profile=full
+unix_time=1788365015
+logical_cpus=9
+parallel_max_threads=9
+tsc_available=1
+benchmark_sink=49
