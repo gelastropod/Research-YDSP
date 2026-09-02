@@ -145,15 +145,14 @@ The ratchets are tested with AES and four 256-bit hash-state choices, <b>strictl
 - `AES-XTS-OpenSSL-full-sector` is an explicit optimized-library control. It submits a complete sector to OpenSSL and is not treated as equivalent to a per-block API timing. The manual XTS implementation is the fair block-by-block comparison.
 - AES ratchets follow the Task 9 state widths: `K = AES-256(K0,S)` produces a 16-byte state; the data operation uses that state as an AES-128 key; and evolution uses `AES-256(KG,K xor C[j])`.
 - Hash ratchets need a 32-byte state. Rather than zero-padding the 16-byte result of one AES call, the 32-byte `K0` is split into `K0L || K0R`, and the seed is expanded as
-
    $$
-   K_{S,0}=\operatorname{AES128}_{K0L}(S)\;||\;\operatorname{AES128}_{K0R}(S).
+   K_{S,0}={AES_{128}}(K_{0L},S)\;||\;{AES_{128}}(K_{0R},S).
    $$
 
-  Every data block therefore uses AES-256 from the start. Evolution is `K = H(K || C[j])`, where `K` is 32 bytes, `C[j]` is 16 bytes, and `H` returns 32 bytes.
+   Every data block therefore uses AES-256 from the start. Evolution is `K = H(K || C[j])`, where `K` is 32 bytes, `C[j]` is 16 bytes, and `H` returns 32 bytes.
 - BLAKE3 uses its supplied portable C implementation. BLAKE2s-256, SHA3-256, SHA-256, and AES use OpenSSL EVP contexts. Persistent contexts are reset for each transition so allocation is not included in every update.
 - The included correctness run passed the BLAKE3 official empty-input vector, independent OpenSSL hash-transition references, the two-AES-call seed expansion check, round trips for every scheme at 512 and 4096 bytes, manual XTS comparison against both literal XTS and OpenSSL XTS, index semantics, target recovery, AddressSanitizer, and UndefinedBehaviorSanitizer.
-- The included benchmark ran on Linux 6.18 x86-64 with GCC 13.3.0, OpenSSL 3.0.13, and an AMD EPYC 9V74 allocation exposing 9 logical CPUs. The CPU advertised AES-NI, and OpenSSL can dispatch AES EVP operations to hardware acceleration. The benchmark does not disable or normalize that acceleration. SHA instruction support was also present, so results must be reported with this environment rather than treated as hardware-independent algorithm constants.
+- ALL RESULTS ARE RUN ON Linux 6.18 x86-64 with GCC 13.3.0, OpenSSL 3.0.13, and an AMD EPYC 9V74 allocation exposing 9 logical CPUs. The CPU advertised AES-NI, and OpenSSL can dispatch AES EVP operations to <b>hardware acceleration</b>.
 
 ## 4. Research-question answers
 
@@ -187,8 +186,11 @@ Representative encryption results for 4096-byte sectors over 32 MiB are:
 | CTR ratchet, BLAKE3 | 64.45 | 60,605 | 14.80 | 38.41 |
 | CBC ratchet, BLAKE3 | 63.10 | 61,907 | 15.11 | 39.24 |
 | CTR ratchet, SHA-256 | 38.54 | 101,353 | 24.74 | 64.24 |
+| CBC ratchet, SHA-256 | 37.19 | 105,040 | 25.64 | 66.58 |
 | CTR ratchet, BLAKE2s-256 | 28.99 | 134,727 | 32.89 | 85.39 |
+| CBC ratchet, BLAKE2s-256 | 28.16 | 138,728 | 33.87 | 87.93 |
 | CTR ratchet, SHA3-256 | 19.79 | 197,358 | 48.18 | 125.09 |
+| CBC ratchet, SHA3-256 | 19.90 | 196,316 | 47.93 | 124.43 |
 
 - `cycles/byte` means total timestamp-counter cycles divided by total bytes processed. It is a processor-work measure for this host, not a portable duration or a literal count for one byte.
 - Manual block-by-block XTS is about 2.9 to 3.0 times faster than AES-ratcheted CTR/CBC and about 5.5 times faster than BLAKE3-ratcheted CTR/CBC in this run.
