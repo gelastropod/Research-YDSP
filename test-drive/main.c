@@ -27,7 +27,11 @@ static void print_progress(uint64_t written, uint64_t total) {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s <device> [offset_bytes] [count_bytes]\n", argv[0]);
+        fprintf(stderr,
+                "Usage: %s <device> [offset_bytes] [count_bytes] [pattern]\n"
+                "  pattern: a string to repeat across the write buffer.\n"
+                "           Defaults to zero-fill if omitted.\n",
+                argv[0]);
         return 1;
     }
 
@@ -35,6 +39,7 @@ int main(int argc, char *argv[]) {
     off_t offset = (argc > 2) ? (off_t)strtoull(argv[2], NULL, 10) : 0;
     // count_bytes: if given, limits how much to write; otherwise write to end of device
     uint64_t requested_count = (argc > 3) ? strtoull(argv[3], NULL, 10) : 0;
+	const char *pattern = (argc > 4) ? argv[4] : NULL;
 
     size_t block_size = 4 * 1024 * 1024; // 4MB per write() call
 
@@ -72,7 +77,20 @@ int main(int argc, char *argv[]) {
         close(fd);
         return 1;
     }
-    memset(buf, 0, block_size);
+	if (pattern && pattern[0] != '\0') {
+		size_t pattern_len = strlen(pattern);
+		size_t filled = 0;
+		unsigned char *b = (unsigned char*)buf;
+		while (filled < block_size) {
+			size_t chunk = pattern_len;
+			if (chunk > block_size - filled) chunk = block_size - filled;
+			memcpy(b + filled, pattern, chunk);
+			filled += chunk;
+		}
+	}
+	else {
+		memset(buf, 0, block_size);
+	}
 
     if (offset > 0) {
         if (lseek(fd, offset, SEEK_SET) < 0) {
