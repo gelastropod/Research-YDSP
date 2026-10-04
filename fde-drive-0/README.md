@@ -1,6 +1,6 @@
 # Ratcheted FDE Implementation on hard drive
 
-See [fde-c-3](/fde-c-3/README.md)
+See [fde-c-3](/fde-c-3/)
 
 ## Building and running
 
