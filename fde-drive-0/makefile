@@ -88,7 +88,7 @@ DRIVE_MODE ?= encrypt
 
 test-drive: $(TEST_DRIVE_BIN)
 ifdef DRIVE_DEVICE
-	$(TEST_DRIVE_BIN) $(DRIVE_MODE) $(DRIVE_DEVICE) $(DRIVE_OFFSET) $(DRIVE_COUNT)
+	$(TEST_DRIVE_BIN) $(if $(DRIVE_SCHEME),--scheme $(DRIVE_SCHEME)) $(DRIVE_MODE) $(DRIVE_DEVICE) $(DRIVE_OFFSET) $(DRIVE_COUNT)
 else
 	@printf 'Build %s.\nSet DRIVE_DEVICE to run it, e.g.:\nmake test-drive DRIVE_DEVICE=/dev/sda\n' "$(TEST_DRIVE_BIN)"
 endif

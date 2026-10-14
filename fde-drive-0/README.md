@@ -10,8 +10,10 @@ Run `make test-drive` to build the files.
 
 To use the program (`build/fde_test_drive`) to encrypt/decrypt a drive, first connect the drive and find where it is located (say `/dev/sda`), then run the following:
 ```
-build/fde_test_drive <encrypt/decrypt> <device> [offset_bytes] [count_bytes] [csv_path] [direct]
+build/fde_test_drive [--scheme <name>] <encrypt/decrypt> <device> [offset_bytes] [count_bytes] [csv_path] [direct]
 ```
+`--scheme` (or `-s`) picks the encryption scheme: `ecb`, `xts`, `ctr-aes` (default), `ctr-blake3`, `cbc-aes` or `cbc-blake3` (full names such as `Ratchet-CBC-AES` also work). With `make test-drive`, pass `DRIVE_SCHEME=<name>`. Decrypt with the same scheme used to encrypt.
+
 So to encrypt the entire drive in `/dev/sda` for example (without buffering, using O_DIRECT flag), and write the timing data into `results/drive_throughput.csv`, run
 ```
 build/fde_test_drive encrypt /dev/sda 0 0 results/drive_throughput.csv direct
