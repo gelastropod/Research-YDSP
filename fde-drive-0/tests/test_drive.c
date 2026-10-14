@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -11,7 +12,7 @@
 
 #define SECTOR_BYTES 4096
 #define BATCH_BYTES (1024 * 1024)
-#define SCHEME FDE_RATCHET_CTR_AES
+#define DEFAULT_SCHEME FDE_RATCHET_CTR_AES
 #define BAR_WIDTH 40
 
 double now_seconds() {
@@ -52,11 +53,65 @@ void print_progress(uint64_t written, uint64_t total, double cumulative_mbps) {
 	fflush(stdout);
 }
 
+static const struct {
+	const char *alias;
+	fde_scheme scheme;
+} scheme_aliases[] = {
+	{"ecb", FDE_ECB},
+	{"xts", FDE_XTS},
+	{"ctr-aes", FDE_RATCHET_CTR_AES},
+	{"ctr-blake3", FDE_RATCHET_CTR_BLAKE3},
+	{"cbc-aes", FDE_RATCHET_CBC_AES},
+	{"cbc-blake3", FDE_RATCHET_CBC_BLAKE3},
+};
+
+int parse_scheme(const char *arg, fde_scheme *out) {
+	for (size_t i = 0; i < sizeof(scheme_aliases) / sizeof(scheme_aliases[0]); i++) {
+		if (strcasecmp(arg, scheme_aliases[i].alias) == 0) {
+			*out = scheme_aliases[i].scheme;
+			return 0;
+		}
+	}
+	for (int i = 0; i < FDE_SCHEME_COUNT; i++) {
+		if (strcasecmp(arg, fde_scheme_name((fde_scheme)i)) == 0) {
+			*out = (fde_scheme)i;
+			return 0;
+		}
+	}
+	return -1;
+}
+
+void print_usage(const char *prog) {
+	fprintf(stderr,
+			"Usage: %s [--scheme <name>] <encrypt/decrypt> <device> [offset_bytes] [count_bytes] [csv_path] [direct]\n"
+			"Schemes (default %s):\n",
+			prog, fde_scheme_name(DEFAULT_SCHEME));
+	for (size_t i = 0; i < sizeof(scheme_aliases) / sizeof(scheme_aliases[0]); i++)
+		fprintf(stderr, "  %-11s %s\n", scheme_aliases[i].alias,
+				fde_scheme_name(scheme_aliases[i].scheme));
+}
+
 int main(int argc, char *argv[]) {
+	fde_scheme scheme = DEFAULT_SCHEME;
+	int nargs = 1;
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "--scheme") == 0 || strcmp(argv[i], "-s") == 0) {
+			if (i + 1 >= argc || parse_scheme(argv[i + 1], &scheme) != 0) {
+				fprintf(stderr, "Unknown or missing scheme%s%s\n",
+						i + 1 < argc ? ": " : "", i + 1 < argc ? argv[i + 1] : "");
+				print_usage(argv[0]);
+				return 1;
+			}
+			i++;
+		}
+		else {
+			argv[nargs++] = argv[i];
+		}
+	}
+	argc = nargs;
+
 	if (argc < 3) {
-		fprintf(stderr,
-				"Usage: %s <encrypt/decrypt> <device> [offset_bytes] [count_bytes] [csv_path] [direct]\n",
-				argv[0]);
+		print_usage(argv[0]);
 		return 1;
 	}
 
@@ -86,6 +141,7 @@ int main(int argc, char *argv[]) {
 
 	size_t io_bytes = use_direct ? BATCH_BYTES : SECTOR_BYTES;
 	uint64_t io_sectors = io_bytes / SECTOR_BYTES;
+	printf("Scheme: %s\n", fde_scheme_name(scheme));
 	if (use_direct) {
 		printf("Using O_DIRECT with batch size of %zu KB\n", io_bytes / 1024);
 	}
@@ -187,15 +243,15 @@ int main(int argc, char *argv[]) {
 		total_io_ns += (uint64_t)((now_seconds() - io_start) * 1e9);
 
 		for (uint64_t i = 0; i < batch_sectors; i++) {
-			uint64_t sector_number = (uint64_t)offset / SECTOR_BYTES + s;
+			uint64_t sector_number = (uint64_t)offset / SECTOR_BYTES + s + i;
 			const void *src = (const char*)in_buf + i * SECTOR_BYTES;
 			void *dst = (char*)out_buf + i * SECTOR_BYTES;
 			int rc;
 
 			if (do_encrypt)
-				rc = fde_encrypt(worker, SCHEME, src, indices, sector_number, blocks, dst, &sector_profile);
+				rc = fde_encrypt(worker, scheme, src, indices, sector_number, blocks, dst, &sector_profile);
 			else
-				rc = fde_decrypt(worker, SCHEME, src, indices, sector_number, blocks, dst, &sector_profile);
+				rc = fde_decrypt(worker, scheme, src, indices, sector_number, blocks, dst, &sector_profile);
 
 			if (rc != 0) {
 				fprintf(stderr, "%s failed at sector %llu",
