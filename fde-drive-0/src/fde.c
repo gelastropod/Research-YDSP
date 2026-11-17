@@ -285,7 +285,9 @@ void fde_ratchet_blake3_update(uint8_t state[32],
 }
 
 int fde_ratchet_xex_sha3_update(fde_worker *worker, uint8_t tweak[16],
-								 uint8_t sector[16], uint8_t index[16], const uint8_t state[16]) {
+                                const uint8_t sector[16],
+                                const uint8_t index[16],
+                                const uint8_t state[16]) {
 	uint8_t in[48], out[16];
 	if (worker == NULL || tweak == NULL || sector == NULL || index == NULL || state == NULL) {
 		return -1;
@@ -524,6 +526,7 @@ static int ratchet_xex_sha3_crypt(fde_worker *worker,
 		if (profile != NULL) {
 			profile_add(&profile->data_ns, start);
 		}
+		memcpy(state, encrypt ? destination : source, 16);
 	}
 	return 0;
 }
@@ -763,7 +766,10 @@ int fde_decrypt_target(fde_worker *worker, fde_scheme scheme,
 		return 0;
     }
 	if (scheme == FDE_RATCHET_XEX_SHA3) {
-		uint8_t state[16] = target == 0 ? {0} : ciphertext + 16 * (target - 1);
+		uint8_t state[16] = {0};
+		if (target > 0) {
+			memcpy(state, ciphertext + 16 * (target - 1), 16);
+		}
 		uint8_t sector_bytes[16], index[16];
 		uint8_t tweak[16];
 		encode_u64_le(sector, sector_bytes);

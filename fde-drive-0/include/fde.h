@@ -93,6 +93,10 @@ int fde_ratchet_aes_update(fde_worker *worker, uint8_t state[16],
                            const uint8_t ciphertext[16]);
 void fde_ratchet_blake3_update(uint8_t state[32],
                                const uint8_t ciphertext[16]);
+int fde_ratchet_xex_sha3_update(fde_worker *worker, uint8_t tweak[16],
+                                const uint8_t sector[16],
+                                const uint8_t index[16],
+                                const uint8_t state[16]);
 
 /* Exposed only for independent XTS correctness tests. */
 void fde_xts_mul_alpha(uint8_t tweak[16]);
