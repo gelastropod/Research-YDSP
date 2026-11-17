@@ -19,6 +19,29 @@ So to encrypt the entire drive in `/dev/sda` for example (without buffering, usi
 build/fde_test_drive encrypt /dev/sda 0 0 results/drive_throughput.csv direct
 ```
 
+## Running multiple schemes
+
+`scripts/run_drive_schemes.sh` runs the drive test once per scheme, producing the same console output and a per-scheme CSV (`results/drive_<mode>_<scheme>.csv`, identical columns to `drive_throughput.csv`):
+
+```
+sh scripts/run_drive_schemes.sh <encrypt/decrypt> <device> [offset_bytes] [count_bytes] [--schemes "ecb xts ..."|all] [--results-dir DIR] [--direct]
+```
+
+`--schemes` accepts a space- or comma-separated list of the scheme aliases above, or `all` (the default). A failing scheme is reported and the run continues with the rest.
+
+Equivalent make target (builds the binary first):
+
+```
+make test-drive-schemes DRIVE_DEVICE=/dev/sda DRIVE_MODE=encrypt \
+    DRIVE_SCHEMES="ecb xts ctr-aes" DRIVE_DIRECT=--direct
+```
+
+`DRIVE_SCHEMES=all` (default) runs every scheme. To compare the resulting CSVs in one figure, pass them all to the plot script:
+
+```
+python scripts/plot_drive_throughput.py results/drive_encrypt_*.csv -o figures/schemes_throughput.png
+```
+
 ## Preliminary testing and results
 
 **Setup:** 128 GB device, 4 KB sectors (31.26M sectors), `O_DIRECT` with 1 MB batched I/O, per-sector crypto. 9,393 samples.

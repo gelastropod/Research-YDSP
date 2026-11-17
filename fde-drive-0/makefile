@@ -76,7 +76,7 @@ SAN_TEST_BIN  := $(SAN_BUILD_DIR)/fde_test
 
 .DEFAULT_GOAL := all
 
-.PHONY: all test sanitize sanitize-leaks clean rebuild \
+.PHONY: all test test-drive test-drive-schemes sanitize sanitize-leaks clean rebuild \
 	quick benchmark bench rq1 rq2 rq3 rq4 capture results run-all help
 
 all: $(BENCH_BIN)
@@ -85,12 +85,23 @@ test: $(TEST_BIN)
 	$(TEST_BIN)
 
 DRIVE_MODE ?= encrypt
+DRIVE_SCHEMES ?= all
+DRIVE_RESULTS ?= results
+DRIVE_DIRECT ?=
 
 test-drive: $(TEST_DRIVE_BIN)
 ifdef DRIVE_DEVICE
 	$(TEST_DRIVE_BIN) $(if $(DRIVE_SCHEME),--scheme $(DRIVE_SCHEME)) $(DRIVE_MODE) $(DRIVE_DEVICE) $(DRIVE_OFFSET) $(DRIVE_COUNT)
 else
 	@printf 'Build %s.\nSet DRIVE_DEVICE to run it, e.g.:\nmake test-drive DRIVE_DEVICE=/dev/sda\n' "$(TEST_DRIVE_BIN)"
+endif
+
+test-drive-schemes: $(TEST_DRIVE_BIN)
+ifdef DRIVE_DEVICE
+	sh scripts/run_drive_schemes.sh $(DRIVE_MODE) $(DRIVE_DEVICE) $(DRIVE_OFFSET) $(DRIVE_COUNT) \
+		--schemes "$(DRIVE_SCHEMES)" --results-dir $(DRIVE_RESULTS) $(DRIVE_DIRECT)
+else
+	@printf 'Build %s.\nSet DRIVE_DEVICE to run it, e.g.:\nmake test-drive-schemes DRIVE_DEVICE=/dev/sda DRIVE_SCHEMES="ecb xts" DRIVE_DIRECT=--direct\n' "$(TEST_DRIVE_BIN)"
 endif
 
 sanitize: $(SAN_TEST_BIN)
@@ -165,6 +176,9 @@ help:
 		'$(PROJECT) build targets:' \
 		'  all (default)    Build the benchmark executable.' \
 		'  test             Build and run the correctness suite.' \
+		'  test-drive       Build the drive test (DRIVE_DEVICE=/dev/sdX to run).' \
+		'  test-drive-schemes  Run the drive test for several schemes' \
+		'                    (DRIVE_SCHEMES="ecb xts ..." or all).' \
 		'  sanitize         Run AddressSanitizer and UndefinedBehaviorSanitizer.' \
 		'  sanitize-leaks   Run sanitizers with leak detection enabled.' \
 		'  quick            Run the short benchmark profile.' \
