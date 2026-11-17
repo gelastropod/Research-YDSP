@@ -12,6 +12,7 @@
 struct fde_worker {
     fde_keys keys;
     uint8_t xts_combined_key[2 * FDE_MASTER_KEY_BYTES];
+	EVP_MD_CTX *xex_md;
     EVP_CIPHER_CTX *ecb_enc;
     EVP_CIPHER_CTX *ecb_dec;
     EVP_CIPHER_CTX *xts_data_enc;
@@ -127,7 +128,8 @@ const char *fde_scheme_name(fde_scheme scheme) {
         "Ratchet-CTR-AES",
         "Ratchet-CTR-BLAKE3",
         "Ratchet-CBC-AES",
-        "Ratchet-CBC-BLAKE3"
+        "Ratchet-CBC-BLAKE3",
+		"Ratchet-XEX-SHA3"
     };
     return (scheme >= 0 && scheme < FDE_SCHEME_COUNT) ? names[scheme]
                                                        : "unknown";
@@ -135,7 +137,7 @@ const char *fde_scheme_name(fde_scheme scheme) {
 
 int fde_scheme_uses_indices(fde_scheme scheme) {
     return scheme == FDE_XTS || scheme == FDE_RATCHET_CTR_AES ||
-           scheme == FDE_RATCHET_CTR_BLAKE3;
+           scheme == FDE_RATCHET_CTR_BLAKE3 || scheme == FDE_RATCHET_XEX_SHA3;
 }
 
 int fde_scheme_is_ratchet(fde_scheme scheme) {
@@ -148,6 +150,7 @@ void fde_default_keys(fde_keys *keys) {
     }
     for (size_t i = 0; i < FDE_MASTER_KEY_BYTES; ++i) {
         keys->ecb_key[i] = (uint8_t)(0x10u + i);
+		keys->hash_key[i] = (uint8_t)(0x10u + i);
         keys->xts_k1[i] = (uint8_t)(0x30u + i);
         keys->xts_k2[i] = (uint8_t)(0x60u + i);
         keys->ratchet_k0[i] = (uint8_t)(0x90u + i);
@@ -171,6 +174,7 @@ fde_worker *fde_worker_new(const fde_keys *keys) {
     memcpy(worker->xts_combined_key + FDE_MASTER_KEY_BYTES, keys->xts_k2,
            FDE_MASTER_KEY_BYTES);
 
+	worker->xex_md = EVP_MD_CTX_new();
     worker->ecb_enc = new_cipher_ctx(EVP_aes_256_ecb(), keys->ecb_key, 1);
     worker->ecb_dec = new_cipher_ctx(EVP_aes_256_ecb(), keys->ecb_key, 0);
     worker->xts_data_enc = new_cipher_ctx(EVP_aes_256_ecb(), keys->xts_k1, 1);
@@ -185,7 +189,8 @@ fde_worker *fde_worker_new(const fde_keys *keys) {
     worker->openssl_xts_enc = EVP_CIPHER_CTX_new();
     worker->openssl_xts_dec = EVP_CIPHER_CTX_new();
 
-    if (worker->ecb_enc == NULL || worker->ecb_dec == NULL ||
+    if (worker->xex_md == NULL ||
+		worker->ecb_enc == NULL || worker->ecb_dec == NULL ||
         worker->xts_data_enc == NULL || worker->xts_data_dec == NULL ||
         worker->xts_tweak_enc == NULL || worker->seed_enc == NULL ||
         worker->ratchet_enc == NULL || worker->dynamic128_enc == NULL ||
@@ -202,6 +207,7 @@ void fde_worker_free(fde_worker *worker) {
     if (worker == NULL) {
         return;
     }
+	EVP_MD_CTX_free(worker->xex_md);
     EVP_CIPHER_CTX_free(worker->ecb_enc);
     EVP_CIPHER_CTX_free(worker->ecb_dec);
     EVP_CIPHER_CTX_free(worker->xts_data_enc);
@@ -243,6 +249,20 @@ static int xts_seed(fde_worker *worker, uint64_t sector, uint8_t tweak[16]) {
     return fixed_block(worker->xts_tweak_enc, 1, encoded, tweak);
 }
 
+static int uh_sha3_256(fde_worker *worker, const uint8_t *input, size_t input_len,
+					   uint8_t out[16]) {
+	uint8_t digest[32];
+	unsigned int digest_len = 0;
+	if (EVP_DigestInit_ex(worker->xex_md, EVP_sha3_256(), NULL) != 1 ||
+		EVP_DigestUpdate(worker->xex_md, input, input_len) != 1 ||
+		EVP_DigestFinal_ex(worker->xex_md, digest, &digest_len) != 1 ||
+		digest_len != 32) {
+		return -1;
+	}
+	memcpy(out, digest, 16);
+	return 0;
+}
+
 int fde_ratchet_aes_update(fde_worker *worker, uint8_t state[16],
                            const uint8_t ciphertext[16]) {
     uint8_t input[16];
@@ -262,6 +282,22 @@ void fde_ratchet_blake3_update(uint8_t state[32],
     blake3_hasher_init(&hasher);
     blake3_hasher_update(&hasher, input, sizeof(input));
     blake3_hasher_finalize(&hasher, state, 32);
+}
+
+int fde_ratchet_xex_sha3_update(fde_worker *worker, uint8_t tweak[16],
+								 uint8_t sector[16], uint8_t index[16], const uint8_t state[16]) {
+	uint8_t in[48], out[16];
+	if (worker == NULL || tweak == NULL || sector == NULL || index == NULL || state == NULL) {
+		return -1;
+	}
+	memcpy(in, sector, 16 * sizeof(uint8_t));
+	memcpy(in + 16, index, 16 * sizeof(uint8_t));
+	memcpy(in + 32, state, 16 * sizeof(uint8_t));
+	if (uh_sha3_256(worker, in, 48, out) != 0) {
+		return -1;
+	}
+	memcpy(tweak, out, 16 * sizeof(uint8_t));
+	return 0;
 }
 
 static int indices_are_consecutive(const uint32_t *indices, size_t blocks) {
@@ -458,6 +494,40 @@ static int ratchet_blake3_crypt(fde_worker *worker, fde_scheme scheme,
     return 0;
 }
 
+static int ratchet_xex_sha3_crypt(fde_worker *worker,
+								  int encrypt, const uint8_t *input,
+								  const uint32_t *indices, uint64_t sector,
+								  size_t blocks, uint8_t *output,
+								  fde_profile *profile) {
+    EVP_CIPHER_CTX *ctx = encrypt ? worker->ecb_enc : worker->ecb_dec;
+	uint8_t state[16] = {0};
+	uint64_t start = profile == NULL ? 0 : now_ns();
+	for (size_t j = 0; j < blocks; ++j) {
+		const uint8_t *source = input + 16 * j;
+		uint8_t xor_source[16], xor_destination[16], *destination = output + 16 * j;
+		uint8_t sector_bytes[16], index[16], tweak[16];
+		start = profile == NULL ? 0 : now_ns();
+		encode_u64_le(sector, sector_bytes);
+		encode_u32_le(index_at(indices, j), index);
+		if (fde_ratchet_xex_sha3_update(worker, tweak, sector_bytes, index, state) != 0) {
+			return -1;
+		}
+		if (profile != NULL) {
+			profile_add(&profile->evolution_ns, start);
+		}
+		start = profile == NULL ? 0 : now_ns();
+		xor_block(xor_source, source, tweak);
+		if (fixed_block(ctx, encrypt, xor_source, xor_destination) != 0) {
+			return -1;
+		}
+		xor_block(destination, xor_destination, tweak);
+		if (profile != NULL) {
+			profile_add(&profile->data_ns, start);
+		}
+	}
+	return 0;
+}
+
 static int validate_arguments(fde_worker *worker, fde_scheme scheme,
                               const uint8_t *input, size_t blocks,
                               uint8_t *output) {
@@ -489,6 +559,9 @@ int fde_encrypt(fde_worker *worker, fde_scheme scheme,
     case FDE_RATCHET_CBC_BLAKE3:
         return ratchet_blake3_crypt(worker, scheme, 1, plaintext, indices,
                                     sector, blocks, ciphertext, profile);
+	case FDE_RATCHET_XEX_SHA3:
+		return ratchet_xex_sha3_crypt(worker, 1, plaintext, indices,
+									  sector, blocks, ciphertext, profile);
     default:
         return -1;
     }
@@ -516,6 +589,9 @@ int fde_decrypt(fde_worker *worker, fde_scheme scheme,
     case FDE_RATCHET_CBC_BLAKE3:
         return ratchet_blake3_crypt(worker, scheme, 0, ciphertext, indices,
                                     sector, blocks, plaintext, profile);
+	case FDE_RATCHET_XEX_SHA3:
+		return ratchet_xex_sha3_crypt(worker, 0, ciphertext, indices,
+									  sector, blocks, plaintext, profile);
     default:
         return -1;
     }
@@ -656,7 +732,7 @@ int fde_decrypt_target(fde_worker *worker, fde_scheme scheme,
         }
         return 0;
     }
-    {
+	if (scheme == FDE_RATCHET_CTR_BLAKE3 || scheme == FDE_RATCHET_CBC_BLAKE3) {
         uint8_t seed[16];
         uint8_t state[32] = {0};
         if (seed_state(worker, sector, seed) != 0) {
@@ -684,6 +760,25 @@ int fde_decrypt_target(fde_worker *worker, fde_scheme scheme,
                 fde_ratchet_blake3_update(state, block);
             }
         }
+		return 0;
     }
+	if (scheme == FDE_RATCHET_XEX_SHA3) {
+		uint8_t state[16] = target == 0 ? {0} : ciphertext + 16 * (target - 1);
+		uint8_t sector_bytes[16], index[16];
+		uint8_t tweak[16];
+		encode_u64_le(sector, sector_bytes);
+		encode_u32_le(index_at(indices, target), index);
+		if (fde_ratchet_xex_sha3_update(worker, tweak, sector_bytes, index, state) != 0) {
+			return -1;
+		}
+		uint8_t xor_source[16];
+		uint8_t xor_destination[16];
+		xor_block(xor_source, ciphertext + 16 * target, tweak);
+		if (fixed_block(worker->ecb_dec, 0, xor_source, xor_destination) != 0) {
+			return -1;
+		}
+		xor_block(plaintext, xor_destination, tweak);
+		return 0;
+	}
     return 0;
 }

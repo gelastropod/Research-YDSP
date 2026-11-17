@@ -19,11 +19,13 @@ typedef enum {
     FDE_RATCHET_CTR_BLAKE3 = 3,
     FDE_RATCHET_CBC_AES = 4,
     FDE_RATCHET_CBC_BLAKE3 = 5,
-    FDE_SCHEME_COUNT = 6
+	FDE_RATCHET_XEX_SHA3 = 6,
+    FDE_SCHEME_COUNT = 7
 } fde_scheme;
 
 typedef struct {
     uint8_t ecb_key[FDE_MASTER_KEY_BYTES];
+	uint8_t hash_key[FDE_MASTER_KEY_BYTES];
     uint8_t xts_k1[FDE_MASTER_KEY_BYTES];
     uint8_t xts_k2[FDE_MASTER_KEY_BYTES];
     uint8_t ratchet_k0[FDE_MASTER_KEY_BYTES];

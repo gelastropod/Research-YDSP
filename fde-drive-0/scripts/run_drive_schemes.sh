@@ -20,7 +20,7 @@ set -u
 project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$project_dir"
 
-ALL_SCHEMES="ecb xts ctr-aes ctr-blake3 cbc-aes cbc-blake3"
+ALL_SCHEMES="ecb xts ctr-aes ctr-blake3 cbc-aes cbc-blake3 xex-sha3"
 
 bin="build/fde_test_drive"
 results_dir="results"
