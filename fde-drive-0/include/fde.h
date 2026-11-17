@@ -19,11 +19,13 @@ typedef enum {
     FDE_RATCHET_CTR_BLAKE3 = 3,
     FDE_RATCHET_CBC_AES = 4,
     FDE_RATCHET_CBC_BLAKE3 = 5,
-    FDE_SCHEME_COUNT = 6
+	FDE_RATCHET_XEX_SHA3 = 6,
+    FDE_SCHEME_COUNT = 7
 } fde_scheme;
 
 typedef struct {
     uint8_t ecb_key[FDE_MASTER_KEY_BYTES];
+	uint8_t hash_key[FDE_MASTER_KEY_BYTES];
     uint8_t xts_k1[FDE_MASTER_KEY_BYTES];
     uint8_t xts_k2[FDE_MASTER_KEY_BYTES];
     uint8_t ratchet_k0[FDE_MASTER_KEY_BYTES];
@@ -91,6 +93,10 @@ int fde_ratchet_aes_update(fde_worker *worker, uint8_t state[16],
                            const uint8_t ciphertext[16]);
 void fde_ratchet_blake3_update(uint8_t state[32],
                                const uint8_t ciphertext[16]);
+int fde_ratchet_xex_sha3_update(fde_worker *worker, uint8_t tweak[16],
+                                const uint8_t sector[16],
+                                const uint8_t index[16],
+                                const uint8_t state[16]);
 
 /* Exposed only for independent XTS correctness tests. */
 void fde_xts_mul_alpha(uint8_t tweak[16]);
