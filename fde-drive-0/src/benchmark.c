@@ -36,6 +36,11 @@ typedef enum {
     BENCH_CTR_BLAKE3,
     BENCH_CBC_AES,
     BENCH_CBC_BLAKE3,
+    BENCH_XEX_SHA3,
+    BENCH_XEX_BLAKE2B,
+    BENCH_XEX_BLAKE3,
+    BENCH_XEX_SIPHASH,
+    BENCH_XEX_KMAC,
     BENCH_IMPL_COUNT
 } bench_impl;
 
@@ -109,7 +114,12 @@ static const char *bench_name(bench_impl implementation) {
         "Ratchet-CTR-AES",
         "Ratchet-CTR-BLAKE3",
         "Ratchet-CBC-AES",
-        "Ratchet-CBC-BLAKE3"
+        "Ratchet-CBC-BLAKE3",
+        "Ratchet-XEX-SHA3",
+        "Ratchet-XEX-BLAKE2b",
+        "Ratchet-XEX-BLAKE3",
+        "Ratchet-XEX-SipHash",
+        "Ratchet-XEX-KMAC"
     };
     return implementation >= 0 && implementation < BENCH_IMPL_COUNT
                ? names[implementation]
@@ -131,6 +141,16 @@ static fde_scheme implementation_scheme(bench_impl implementation) {
         return FDE_RATCHET_CBC_AES;
     case BENCH_CBC_BLAKE3:
         return FDE_RATCHET_CBC_BLAKE3;
+	case BENCH_XEX_SHA3:
+        return FDE_RATCHET_XEX_SHA3;
+    case BENCH_XEX_BLAKE2B:
+        return FDE_RATCHET_XEX_BLAKE2B;
+    case BENCH_XEX_BLAKE3:
+        return FDE_RATCHET_XEX_BLAKE3;
+    case BENCH_XEX_SIPHASH:
+        return FDE_RATCHET_XEX_SIPHASH;
+    case BENCH_XEX_KMAC:
+        return FDE_RATCHET_XEX_KMAC;
     default:
         return FDE_ECB;
     }
