@@ -1,0 +1,253 @@
+session,scheme,tampered_block,damaged_blocks,detected,host,CPU
+1,ecb_bulk,1,1,False,native,Intel i7
+1,ecb_bulk,32,32,False,native,Intel i7
+1,ecb_bulk,256,256,False,native,Intel i7
+1,xts_library,1,1,False,native,Intel i7
+1,xts_library,32,32,False,native,Intel i7
+1,xts_library,256,256,False,native,Intel i7
+1,xts_manual_ni,1,1,False,native,Intel i7
+1,xts_manual_ni,32,32,False,native,Intel i7
+1,xts_manual_ni,256,256,False,native,Intel i7
+1,xex_blake2s,1,1;2,False,native,Intel i7
+1,xex_blake2s,32,32;33,False,native,Intel i7
+1,xex_blake2s,256,256,False,native,Intel i7
+1,cbc_mac,1,1;2,False,native,Intel i7
+1,cbc_mac,32,32;33,False,native,Intel i7
+1,cbc_mac,256,256,False,native,Intel i7
+1,lrw_horner,1,1;2,False,native,Intel i7
+1,lrw_horner,32,32;33,False,native,Intel i7
+1,lrw_horner,256,256,False,native,Intel i7
+1,lrw_precompute,1,1;2,False,native,Intel i7
+1,lrw_precompute,32,32;33,False,native,Intel i7
+1,lrw_precompute,256,256,False,native,Intel i7
+2,ecb_bulk,1,1,False,native,Intel i7
+2,ecb_bulk,32,32,False,native,Intel i7
+2,ecb_bulk,256,256,False,native,Intel i7
+2,xts_library,1,1,False,native,Intel i7
+2,xts_library,32,32,False,native,Intel i7
+2,xts_library,256,256,False,native,Intel i7
+2,xts_manual_ni,1,1,False,native,Intel i7
+2,xts_manual_ni,32,32,False,native,Intel i7
+2,xts_manual_ni,256,256,False,native,Intel i7
+2,xex_blake2s,1,1;2,False,native,Intel i7
+2,xex_blake2s,32,32;33,False,native,Intel i7
+2,xex_blake2s,256,256,False,native,Intel i7
+2,cbc_mac,1,1;2,False,native,Intel i7
+2,cbc_mac,32,32;33,False,native,Intel i7
+2,cbc_mac,256,256,False,native,Intel i7
+2,lrw_horner,1,1;2,False,native,Intel i7
+2,lrw_horner,32,32;33,False,native,Intel i7
+2,lrw_horner,256,256,False,native,Intel i7
+2,lrw_precompute,1,1;2,False,native,Intel i7
+2,lrw_precompute,32,32;33,False,native,Intel i7
+2,lrw_precompute,256,256,False,native,Intel i7
+3,ecb_bulk,1,1,False,native,Intel i7
+3,ecb_bulk,32,32,False,native,Intel i7
+3,ecb_bulk,256,256,False,native,Intel i7
+3,xts_library,1,1,False,native,Intel i7
+3,xts_library,32,32,False,native,Intel i7
+3,xts_library,256,256,False,native,Intel i7
+3,xts_manual_ni,1,1,False,native,Intel i7
+3,xts_manual_ni,32,32,False,native,Intel i7
+3,xts_manual_ni,256,256,False,native,Intel i7
+3,xex_blake2s,1,1;2,False,native,Intel i7
+3,xex_blake2s,32,32;33,False,native,Intel i7
+3,xex_blake2s,256,256,False,native,Intel i7
+3,cbc_mac,1,1;2,False,native,Intel i7
+3,cbc_mac,32,32;33,False,native,Intel i7
+3,cbc_mac,256,256,False,native,Intel i7
+3,lrw_horner,1,1;2,False,native,Intel i7
+3,lrw_horner,32,32;33,False,native,Intel i7
+3,lrw_horner,256,256,False,native,Intel i7
+3,lrw_precompute,1,1;2,False,native,Intel i7
+3,lrw_precompute,32,32;33,False,native,Intel i7
+3,lrw_precompute,256,256,False,native,Intel i7
+4,ecb_bulk,1,1,False,native,Intel i7
+4,ecb_bulk,32,32,False,native,Intel i7
+4,ecb_bulk,256,256,False,native,Intel i7
+4,xts_library,1,1,False,native,Intel i7
+4,xts_library,32,32,False,native,Intel i7
+4,xts_library,256,256,False,native,Intel i7
+4,xts_manual_ni,1,1,False,native,Intel i7
+4,xts_manual_ni,32,32,False,native,Intel i7
+4,xts_manual_ni,256,256,False,native,Intel i7
+4,xex_blake2s,1,1;2,False,native,Intel i7
+4,xex_blake2s,32,32;33,False,native,Intel i7
+4,xex_blake2s,256,256,False,native,Intel i7
+4,cbc_mac,1,1;2,False,native,Intel i7
+4,cbc_mac,32,32;33,False,native,Intel i7
+4,cbc_mac,256,256,False,native,Intel i7
+4,lrw_horner,1,1;2,False,native,Intel i7
+4,lrw_horner,32,32;33,False,native,Intel i7
+4,lrw_horner,256,256,False,native,Intel i7
+4,lrw_precompute,1,1;2,False,native,Intel i7
+4,lrw_precompute,32,32;33,False,native,Intel i7
+4,lrw_precompute,256,256,False,native,Intel i7
+5,ecb_bulk,1,1,False,native,Intel i7
+5,ecb_bulk,32,32,False,native,Intel i7
+5,ecb_bulk,256,256,False,native,Intel i7
+5,xts_library,1,1,False,native,Intel i7
+5,xts_library,32,32,False,native,Intel i7
+5,xts_library,256,256,False,native,Intel i7
+5,xts_manual_ni,1,1,False,native,Intel i7
+5,xts_manual_ni,32,32,False,native,Intel i7
+5,xts_manual_ni,256,256,False,native,Intel i7
+5,xex_blake2s,1,1;2,False,native,Intel i7
+5,xex_blake2s,32,32;33,False,native,Intel i7
+5,xex_blake2s,256,256,False,native,Intel i7
+5,cbc_mac,1,1;2,False,native,Intel i7
+5,cbc_mac,32,32;33,False,native,Intel i7
+5,cbc_mac,256,256,False,native,Intel i7
+5,lrw_horner,1,1;2,False,native,Intel i7
+5,lrw_horner,32,32;33,False,native,Intel i7
+5,lrw_horner,256,256,False,native,Intel i7
+5,lrw_precompute,1,1;2,False,native,Intel i7
+5,lrw_precompute,32,32;33,False,native,Intel i7
+5,lrw_precompute,256,256,False,native,Intel i7
+6,ecb_bulk,1,1,False,native,Intel i7
+6,ecb_bulk,32,32,False,native,Intel i7
+6,ecb_bulk,256,256,False,native,Intel i7
+6,xts_library,1,1,False,native,Intel i7
+6,xts_library,32,32,False,native,Intel i7
+6,xts_library,256,256,False,native,Intel i7
+6,xts_manual_ni,1,1,False,native,Intel i7
+6,xts_manual_ni,32,32,False,native,Intel i7
+6,xts_manual_ni,256,256,False,native,Intel i7
+6,xex_blake2s,1,1;2,False,native,Intel i7
+6,xex_blake2s,32,32;33,False,native,Intel i7
+6,xex_blake2s,256,256,False,native,Intel i7
+6,cbc_mac,1,1;2,False,native,Intel i7
+6,cbc_mac,32,32;33,False,native,Intel i7
+6,cbc_mac,256,256,False,native,Intel i7
+6,lrw_horner,1,1;2,False,native,Intel i7
+6,lrw_horner,32,32;33,False,native,Intel i7
+6,lrw_horner,256,256,False,native,Intel i7
+6,lrw_precompute,1,1;2,False,native,Intel i7
+6,lrw_precompute,32,32;33,False,native,Intel i7
+6,lrw_precompute,256,256,False,native,Intel i7
+1,ecb_bulk,1,1,False,local,Xeon
+1,ecb_bulk,32,32,False,local,Xeon
+1,ecb_bulk,256,256,False,local,Xeon
+1,xts_library,1,1,False,local,Xeon
+1,xts_library,32,32,False,local,Xeon
+1,xts_library,256,256,False,local,Xeon
+1,xts_manual_ni,1,1,False,local,Xeon
+1,xts_manual_ni,32,32,False,local,Xeon
+1,xts_manual_ni,256,256,False,local,Xeon
+1,xex_blake2s,1,1;2,False,local,Xeon
+1,xex_blake2s,32,32;33,False,local,Xeon
+1,xex_blake2s,256,256,False,local,Xeon
+1,cbc_mac,1,1;2,False,local,Xeon
+1,cbc_mac,32,32;33,False,local,Xeon
+1,cbc_mac,256,256,False,local,Xeon
+1,lrw_horner,1,1;2,False,local,Xeon
+1,lrw_horner,32,32;33,False,local,Xeon
+1,lrw_horner,256,256,False,local,Xeon
+1,lrw_precompute,1,1;2,False,local,Xeon
+1,lrw_precompute,32,32;33,False,local,Xeon
+1,lrw_precompute,256,256,False,local,Xeon
+2,ecb_bulk,1,1,False,local,Xeon
+2,ecb_bulk,32,32,False,local,Xeon
+2,ecb_bulk,256,256,False,local,Xeon
+2,xts_library,1,1,False,local,Xeon
+2,xts_library,32,32,False,local,Xeon
+2,xts_library,256,256,False,local,Xeon
+2,xts_manual_ni,1,1,False,local,Xeon
+2,xts_manual_ni,32,32,False,local,Xeon
+2,xts_manual_ni,256,256,False,local,Xeon
+2,xex_blake2s,1,1;2,False,local,Xeon
+2,xex_blake2s,32,32;33,False,local,Xeon
+2,xex_blake2s,256,256,False,local,Xeon
+2,cbc_mac,1,1;2,False,local,Xeon
+2,cbc_mac,32,32;33,False,local,Xeon
+2,cbc_mac,256,256,False,local,Xeon
+2,lrw_horner,1,1;2,False,local,Xeon
+2,lrw_horner,32,32;33,False,local,Xeon
+2,lrw_horner,256,256,False,local,Xeon
+2,lrw_precompute,1,1;2,False,local,Xeon
+2,lrw_precompute,32,32;33,False,local,Xeon
+2,lrw_precompute,256,256,False,local,Xeon
+3,ecb_bulk,1,1,False,local,Xeon
+3,ecb_bulk,32,32,False,local,Xeon
+3,ecb_bulk,256,256,False,local,Xeon
+3,xts_library,1,1,False,local,Xeon
+3,xts_library,32,32,False,local,Xeon
+3,xts_library,256,256,False,local,Xeon
+3,xts_manual_ni,1,1,False,local,Xeon
+3,xts_manual_ni,32,32,False,local,Xeon
+3,xts_manual_ni,256,256,False,local,Xeon
+3,xex_blake2s,1,1;2,False,local,Xeon
+3,xex_blake2s,32,32;33,False,local,Xeon
+3,xex_blake2s,256,256,False,local,Xeon
+3,cbc_mac,1,1;2,False,local,Xeon
+3,cbc_mac,32,32;33,False,local,Xeon
+3,cbc_mac,256,256,False,local,Xeon
+3,lrw_horner,1,1;2,False,local,Xeon
+3,lrw_horner,32,32;33,False,local,Xeon
+3,lrw_horner,256,256,False,local,Xeon
+3,lrw_precompute,1,1;2,False,local,Xeon
+3,lrw_precompute,32,32;33,False,local,Xeon
+3,lrw_precompute,256,256,False,local,Xeon
+4,ecb_bulk,1,1,False,local,Xeon
+4,ecb_bulk,32,32,False,local,Xeon
+4,ecb_bulk,256,256,False,local,Xeon
+4,xts_library,1,1,False,local,Xeon
+4,xts_library,32,32,False,local,Xeon
+4,xts_library,256,256,False,local,Xeon
+4,xts_manual_ni,1,1,False,local,Xeon
+4,xts_manual_ni,32,32,False,local,Xeon
+4,xts_manual_ni,256,256,False,local,Xeon
+4,xex_blake2s,1,1;2,False,local,Xeon
+4,xex_blake2s,32,32;33,False,local,Xeon
+4,xex_blake2s,256,256,False,local,Xeon
+4,cbc_mac,1,1;2,False,local,Xeon
+4,cbc_mac,32,32;33,False,local,Xeon
+4,cbc_mac,256,256,False,local,Xeon
+4,lrw_horner,1,1;2,False,local,Xeon
+4,lrw_horner,32,32;33,False,local,Xeon
+4,lrw_horner,256,256,False,local,Xeon
+4,lrw_precompute,1,1;2,False,local,Xeon
+4,lrw_precompute,32,32;33,False,local,Xeon
+4,lrw_precompute,256,256,False,local,Xeon
+5,ecb_bulk,1,1,False,local,Xeon
+5,ecb_bulk,32,32,False,local,Xeon
+5,ecb_bulk,256,256,False,local,Xeon
+5,xts_library,1,1,False,local,Xeon
+5,xts_library,32,32,False,local,Xeon
+5,xts_library,256,256,False,local,Xeon
+5,xts_manual_ni,1,1,False,local,Xeon
+5,xts_manual_ni,32,32,False,local,Xeon
+5,xts_manual_ni,256,256,False,local,Xeon
+5,xex_blake2s,1,1;2,False,local,Xeon
+5,xex_blake2s,32,32;33,False,local,Xeon
+5,xex_blake2s,256,256,False,local,Xeon
+5,cbc_mac,1,1;2,False,local,Xeon
+5,cbc_mac,32,32;33,False,local,Xeon
+5,cbc_mac,256,256,False,local,Xeon
+5,lrw_horner,1,1;2,False,local,Xeon
+5,lrw_horner,32,32;33,False,local,Xeon
+5,lrw_horner,256,256,False,local,Xeon
+5,lrw_precompute,1,1;2,False,local,Xeon
+5,lrw_precompute,32,32;33,False,local,Xeon
+5,lrw_precompute,256,256,False,local,Xeon
+6,ecb_bulk,1,1,False,local,Xeon
+6,ecb_bulk,32,32,False,local,Xeon
+6,ecb_bulk,256,256,False,local,Xeon
+6,xts_library,1,1,False,local,Xeon
+6,xts_library,32,32,False,local,Xeon
+6,xts_library,256,256,False,local,Xeon
+6,xts_manual_ni,1,1,False,local,Xeon
+6,xts_manual_ni,32,32,False,local,Xeon
+6,xts_manual_ni,256,256,False,local,Xeon
+6,xex_blake2s,1,1;2,False,local,Xeon
+6,xex_blake2s,32,32;33,False,local,Xeon
+6,xex_blake2s,256,256,False,local,Xeon
+6,cbc_mac,1,1;2,False,local,Xeon
+6,cbc_mac,32,32;33,False,local,Xeon
+6,cbc_mac,256,256,False,local,Xeon
+6,lrw_horner,1,1;2,False,local,Xeon
+6,lrw_horner,32,32;33,False,local,Xeon
+6,lrw_horner,256,256,False,local,Xeon
+6,lrw_precompute,1,1;2,False,local,Xeon
+6,lrw_precompute,32,32;33,False,local,Xeon
+6,lrw_precompute,256,256,False,local,Xeon

@@ -1,0 +1,1 @@
+4096-byte sector and direct block read verified

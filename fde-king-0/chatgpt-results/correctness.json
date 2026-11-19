@@ -1,0 +1,7 @@
+{
+  "tests": 8,
+  "failures": 0,
+  "errors": 0,
+  "passed": true,
+  "scope": "Final delivered source; report benchmark initially ran seven tests before one additional hash-vector test was added."
+}

@@ -1,0 +1,5 @@
+scheme,workers,median,ci_low,ci_high,sessions,samples,ci_scope,ci_replicates,coverage_lower_bound,ci_reliable
+lrw_horner,1,1025084.5,921669.625,1105815.375,6,30,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_horner,2,2303159.875,2093257.25,2986667.75,6,30,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_precompute,1,728227.3125,717583.0,880663.0,6,30,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_precompute,2,1968719.125,1828664.75,2790983.75,6,30,between_launch_order_statistics,6,0.96875,requires_iid_launches

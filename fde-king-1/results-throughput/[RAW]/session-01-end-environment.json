@@ -1,0 +1,97 @@
+{
+  "source_sha256": {
+    "analyse.py": "70d5a1af629fc7ce90dc1e280c7bb9a7e7ddee9f0612d82adb545296dd85c375",
+    "benchmark.py": "2f6d3d0a9634266ab41d0c682f141216340f56cfec2a5bd42295e52cc350a0b2",
+    "engine.py": "009b36823717d7348f7aab8c475f01256808d5d91ab9349df3980fdc8dd52690",
+    "masks.py": "30d5892ef3f3d53cf878f24b00ca0198b01f48ebbc3721b0623e587eb2b0692b",
+    "reference.py": "6b3268f90b9b4737dde5a7c7c6def9c2fc35b9cfdf0ece297eae776c45891364",
+    "statistics.py": "bc311b7eb64a825e80d6f5dd2b09170e86a4cc9ef91fa93980ca9d3a30c0529c",
+    "__init__.py": "711b0d501fb034d4528b047102ed1a6595279c28996165e23bdb18e1fa9b8798"
+  },
+  "timestamp_utc": "2026-11-19T05:25:16Z",
+  "python": "3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0]",
+  "platform": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+  "cpu_model": "13th Gen Intel(R) Core(TM) i7-1365U",
+  "logical_cpus": 12,
+  "affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "frequency_khz_snapshot": "not exposed",
+  "execution": "CPU only; no GPU/CUDA",
+  "gil_enabled": true,
+  "aes_ni_available": true,
+  "clmul_available": true,
+  "openssl": "OpenSSL 4.0.1 9 Jun 2026",
+  "packages": {
+    "cryptography": "50.0.0",
+    "pycryptodome": "4.5.0",
+    "blake3": "1.0.11",
+    "PyNaCl": "1.6.2",
+    "numpy": "2.3.5",
+    "matplotlib": "3.10.8",
+    "pandas": "2.2.3"
+  },
+  "clock": "perf_counter_ns",
+  "timer_resolution_ns": 1.0,
+  "conditions": "Frequency/power/background load not controlled; snapshots do not prove constant clock",
+  "key_fixture": "Shared public benchmark fixture; not production keys",
+  "config": {
+    "preset": "report",
+    "rqs": [
+      2
+    ],
+    "schemes": [
+      "ecb_bulk",
+      "xts_manual_soft",
+      "xts_manual_ni",
+      "xts_library",
+      "xex_blake2s",
+      "xex_blake2b",
+      "xex_blake3",
+      "xex_siphash128",
+      "xex_kmac128",
+      "cbc_mac",
+      "lrw_horner",
+      "lrw_precompute"
+    ],
+    "sessions": 6,
+    "work_mib": [
+      1.0
+    ],
+    "sector_sizes": [
+      512,
+      4096
+    ],
+    "workers": [
+      1,
+      2,
+      4
+    ],
+    "thread_kib": [
+      256
+    ],
+    "repeats": 5,
+    "thread_repeats": 5,
+    "profile_rounds": 500,
+    "hash_calls": 10000,
+    "read_samples": 200,
+    "optimization_repeats": 10,
+    "optimization_rounds": 50,
+    "setup_repeats": 20,
+    "within_sectors": 8,
+    "bootstrap": 10000,
+    "seed": 20261119,
+    "disk_bytes": 67108864
+  }
+}

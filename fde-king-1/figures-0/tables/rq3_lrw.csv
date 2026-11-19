@@ -1,0 +1,17 @@
+work_mib,sector_size,direction,ratio,ci_low,ci_high,sessions,ci_scope,coverage_lower_bound,within_five_percent,host,CPU
+1.0,512,decrypt,1.168103712156205,1.1502702451171394,1.1850258320912257,6,paired_launch_order_statistics,0.96875,False,native,Intel i7
+1.0,512,encrypt,1.1158984603216693,1.1055332704800345,1.1578015842390277,6,paired_launch_order_statistics,0.96875,False,native,Intel i7
+1.0,4096,decrypt,1.195596591033361,1.170717596396766,1.235588085344849,6,paired_launch_order_statistics,0.96875,False,native,Intel i7
+1.0,4096,encrypt,1.1235933390375012,1.1135555831902972,1.1492351772302136,6,paired_launch_order_statistics,0.96875,False,native,Intel i7
+4.0,512,decrypt,1.1620750079540785,1.1606068625468793,1.1756444508045532,6,paired_launch_order_statistics,0.96875,False,native,Intel i7
+4.0,512,encrypt,1.109586102537888,1.0922541538572053,1.1378761523329934,6,paired_launch_order_statistics,0.96875,False,native,Intel i7
+4.0,4096,decrypt,1.2082386215694925,1.1580699879535985,1.2306491694054094,6,paired_launch_order_statistics,0.96875,False,native,Intel i7
+4.0,4096,encrypt,1.13210849238792,1.1167813003905145,1.1422416669309623,6,paired_launch_order_statistics,0.96875,False,native,Intel i7
+1.0,512,decrypt,1.1360192106807134,1.017141173388829,1.3260640329737463,6,paired_launch_order_statistics,0.96875,False,local,Xeon
+1.0,512,encrypt,1.089465291977754,1.053622847690761,1.1390966742079844,6,paired_launch_order_statistics,0.96875,False,local,Xeon
+1.0,4096,decrypt,1.2202826070438582,1.161364537702157,1.2869496220238257,6,paired_launch_order_statistics,0.96875,False,local,Xeon
+1.0,4096,encrypt,1.1371407360138892,1.0746908744867285,1.1831353415365116,6,paired_launch_order_statistics,0.96875,False,local,Xeon
+4.0,512,decrypt,1.136111227534581,1.1218772806547257,1.2359630770135377,6,paired_launch_order_statistics,0.96875,False,local,Xeon
+4.0,512,encrypt,1.11406069066817,1.0775085481485498,1.2150870528276467,6,paired_launch_order_statistics,0.96875,False,local,Xeon
+4.0,4096,decrypt,1.19990769325854,1.1764582691784211,1.3610257523154752,6,paired_launch_order_statistics,0.96875,False,local,Xeon
+4.0,4096,encrypt,1.1046842156620262,1.0272382571372671,1.159468832889687,6,paired_launch_order_statistics,0.96875,False,local,Xeon

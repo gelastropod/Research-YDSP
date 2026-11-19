@@ -1,0 +1,25 @@
+scheme,median,ci_low,ci_high,sessions,samples,ci_scope,ci_replicates,coverage_lower_bound,ci_reliable,table_payload_bytes,host,CPU
+cbc_mac,9477.25,8918.0,10670.5,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,native,Intel i7
+ecb_bulk,6428.5,6073.5,7121.5,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,native,Intel i7
+lrw_horner,9134.5,9025.5,9781.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,native,Intel i7
+lrw_precompute,296352.75,282115.5,315619.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,4096,native,Intel i7
+xex_blake2b,7362.25,6993.0,7995.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,native,Intel i7
+xex_blake2s,7392.75,6982.0,7829.5,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,native,Intel i7
+xex_blake3,7598.25,7269.5,9872.5,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,native,Intel i7
+xex_kmac128,6847.25,6459.5,6912.5,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,native,Intel i7
+xex_siphash128,6786.75,6448.0,7254.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,native,Intel i7
+xts_library,6212.75,5941.0,6541.5,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,native,Intel i7
+xts_manual_ni,6311.75,6098.0,6660.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,native,Intel i7
+xts_manual_soft,6883.0,6811.5,7861.5,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,native,Intel i7
+cbc_mac,17005.0,15896.0,19662.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,local,Xeon
+ecb_bulk,11293.25,11112.5,12913.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,local,Xeon
+lrw_horner,16440.75,15729.0,17439.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,local,Xeon
+lrw_precompute,557197.75,500358.5,645946.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,4096,local,Xeon
+xex_blake2b,13109.25,11868.5,13693.5,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,local,Xeon
+xex_blake2s,13054.5,11845.0,13726.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,local,Xeon
+xex_blake3,14060.75,12833.5,14363.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,local,Xeon
+xex_kmac128,12212.5,11566.5,13970.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,local,Xeon
+xex_siphash128,11947.5,11313.5,13256.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,local,Xeon
+xts_library,11369.25,10925.0,11823.5,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,local,Xeon
+xts_manual_ni,11212.75,10744.5,11809.5,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,local,Xeon
+xts_manual_soft,12193.75,11442.0,13154.0,6,120,between_launch_order_statistics,6,0.96875,requires_iid_launches,0,local,Xeon

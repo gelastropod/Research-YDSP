@@ -1,0 +1,5 @@
+work_mib,sector_size,direction,ratio,ci_low,ci_high,sessions,ci_scope,coverage_lower_bound,within_five_percent
+1.0,512,decrypt,1.1557628877029746,1.1325455278986263,1.2072425829565085,6,paired_launch_order_statistics,0.96875,False
+1.0,512,encrypt,1.1097876833029434,1.0633671173138273,1.1534636048085476,6,paired_launch_order_statistics,0.96875,False
+1.0,4096,decrypt,1.1967968269583835,1.1711854243040247,1.2567387500283935,6,paired_launch_order_statistics,0.96875,False
+1.0,4096,encrypt,1.103362076754895,1.0763832659225603,1.1293562977008316,6,paired_launch_order_statistics,0.96875,False
