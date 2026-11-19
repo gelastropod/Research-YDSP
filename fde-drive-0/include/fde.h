@@ -20,7 +20,11 @@ typedef enum {
     FDE_RATCHET_CBC_AES = 4,
     FDE_RATCHET_CBC_BLAKE3 = 5,
 	FDE_RATCHET_XEX_SHA3 = 6,
-    FDE_SCHEME_COUNT = 7
+    FDE_RATCHET_XEX_BLAKE2B = 7,
+    FDE_RATCHET_XEX_BLAKE3 = 8,
+    FDE_RATCHET_XEX_SIPHASH = 9,
+    FDE_RATCHET_XEX_KMAC = 10,
+    FDE_SCHEME_COUNT = 11
 } fde_scheme;
 
 typedef struct {
@@ -28,6 +32,7 @@ typedef struct {
 	uint8_t hash_key[FDE_MASTER_KEY_BYTES];
     uint8_t xts_k1[FDE_MASTER_KEY_BYTES];
     uint8_t xts_k2[FDE_MASTER_KEY_BYTES];
+    uint8_t ratchet_key[FDE_MASTER_KEY_BYTES];
     uint8_t ratchet_k0[FDE_MASTER_KEY_BYTES];
     uint8_t ratchet_kg[FDE_MASTER_KEY_BYTES];
 } fde_keys;
@@ -93,10 +98,22 @@ int fde_ratchet_aes_update(fde_worker *worker, uint8_t state[16],
                            const uint8_t ciphertext[16]);
 void fde_ratchet_blake3_update(uint8_t state[32],
                                const uint8_t ciphertext[16]);
-int fde_ratchet_xex_sha3_update(fde_worker *worker, uint8_t tweak[16],
+
+/* A 48-byte-context -> 16-byte mask function for the XEX ratchets.
+ * Keyed variants read their key material from worker->keys.
+ * Returns 0 on success, -1 on failure. */
+typedef int (*fde_xex_hash_fn)(fde_worker *worker, const uint8_t *input,
+                               size_t input_len, uint8_t out[16]);
+
+int fde_ratchet_xex_unkeyed_update(fde_worker *worker, uint8_t tweak[16],
                                 const uint8_t sector[16],
                                 const uint8_t index[16],
                                 const uint8_t state[16]);
+int fde_ratchet_xex_keyed_update(fde_worker *worker, uint8_t tweak[16],
+                                 const uint8_t sector[16],
+                                 const uint8_t index[16],
+                                 const uint8_t state[16],
+                                 fde_xex_hash_fn hash_fn);
 
 /* Exposed only for independent XTS correctness tests. */
 void fde_xts_mul_alpha(uint8_t tweak[16]);

@@ -4,6 +4,8 @@
 #include "blake3.h"
 
 #include <openssl/evp.h>
+#include <openssl/core_names.h>
+#include <openssl/params.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +15,12 @@ struct fde_worker {
     fde_keys keys;
     uint8_t xts_combined_key[2 * FDE_MASTER_KEY_BYTES];
 	EVP_MD_CTX *xex_md;
+	EVP_MAC *xex_kmac;
+	EVP_MAC *xex_b2b;
+	EVP_MAC *xex_sip;
+	EVP_MAC_CTX *xex_kmac_ctx;
+	EVP_MAC_CTX *xex_b2b_ctx;
+	EVP_MAC_CTX *xex_sip_ctx;
     EVP_CIPHER_CTX *ecb_enc;
     EVP_CIPHER_CTX *ecb_dec;
     EVP_CIPHER_CTX *xts_data_enc;
@@ -129,7 +137,11 @@ const char *fde_scheme_name(fde_scheme scheme) {
         "Ratchet-CTR-BLAKE3",
         "Ratchet-CBC-AES",
         "Ratchet-CBC-BLAKE3",
-		"Ratchet-XEX-SHA3"
+		"Ratchet-XEX-SHA3",
+        "Ratchet-XEX-BLAKE2B",
+        "Ratchet-XEX-BLAKE3",
+        "Ratchet-XEX-SIPHASH",
+        "Ratchet-XEX-KMAC"
     };
     return (scheme >= 0 && scheme < FDE_SCHEME_COUNT) ? names[scheme]
                                                        : "unknown";
@@ -137,7 +149,7 @@ const char *fde_scheme_name(fde_scheme scheme) {
 
 int fde_scheme_uses_indices(fde_scheme scheme) {
     return scheme == FDE_XTS || scheme == FDE_RATCHET_CTR_AES ||
-           scheme == FDE_RATCHET_CTR_BLAKE3 || scheme == FDE_RATCHET_XEX_SHA3;
+           scheme == FDE_RATCHET_CTR_BLAKE3 || scheme >= FDE_RATCHET_XEX_SHA3;
 }
 
 int fde_scheme_is_ratchet(fde_scheme scheme) {
@@ -150,9 +162,10 @@ void fde_default_keys(fde_keys *keys) {
     }
     for (size_t i = 0; i < FDE_MASTER_KEY_BYTES; ++i) {
         keys->ecb_key[i] = (uint8_t)(0x10u + i);
-		keys->hash_key[i] = (uint8_t)(0x10u + i);
+		keys->hash_key[i] = (uint8_t)(0x40u + i);
         keys->xts_k1[i] = (uint8_t)(0x30u + i);
         keys->xts_k2[i] = (uint8_t)(0x60u + i);
+        keys->ratchet_key[i] = (uint8_t)(0x70u + i);
         keys->ratchet_k0[i] = (uint8_t)(0x90u + i);
         keys->ratchet_kg[i] = (uint8_t)(0xc0u + i);
     }
@@ -175,6 +188,15 @@ fde_worker *fde_worker_new(const fde_keys *keys) {
            FDE_MASTER_KEY_BYTES);
 
 	worker->xex_md = EVP_MD_CTX_new();
+	worker->xex_kmac = EVP_MAC_fetch(NULL, "KMAC-128", NULL);
+	worker->xex_kmac_ctx = worker->xex_kmac == NULL ? NULL
+						  : EVP_MAC_CTX_new(worker->xex_kmac);
+	worker->xex_b2b = EVP_MAC_fetch(NULL, "BLAKE2BMAC", NULL);
+	worker->xex_b2b_ctx = worker->xex_b2b == NULL ? NULL
+						 : EVP_MAC_CTX_new(worker->xex_b2b);
+	worker->xex_sip = EVP_MAC_fetch(NULL, "SIPHASH", NULL);
+	worker->xex_sip_ctx = worker->xex_sip == NULL ? NULL
+						 : EVP_MAC_CTX_new(worker->xex_sip);
     worker->ecb_enc = new_cipher_ctx(EVP_aes_256_ecb(), keys->ecb_key, 1);
     worker->ecb_dec = new_cipher_ctx(EVP_aes_256_ecb(), keys->ecb_key, 0);
     worker->xts_data_enc = new_cipher_ctx(EVP_aes_256_ecb(), keys->xts_k1, 1);
@@ -189,7 +211,8 @@ fde_worker *fde_worker_new(const fde_keys *keys) {
     worker->openssl_xts_enc = EVP_CIPHER_CTX_new();
     worker->openssl_xts_dec = EVP_CIPHER_CTX_new();
 
-    if (worker->xex_md == NULL ||
+    if (worker->xex_md == NULL || worker->xex_kmac_ctx == NULL ||
+		worker->xex_b2b_ctx == NULL || worker->xex_sip_ctx == NULL ||
 		worker->ecb_enc == NULL || worker->ecb_dec == NULL ||
         worker->xts_data_enc == NULL || worker->xts_data_dec == NULL ||
         worker->xts_tweak_enc == NULL || worker->seed_enc == NULL ||
@@ -208,6 +231,12 @@ void fde_worker_free(fde_worker *worker) {
         return;
     }
 	EVP_MD_CTX_free(worker->xex_md);
+	EVP_MAC_CTX_free(worker->xex_kmac_ctx);
+	EVP_MAC_CTX_free(worker->xex_b2b_ctx);
+	EVP_MAC_CTX_free(worker->xex_sip_ctx);
+	EVP_MAC_free(worker->xex_kmac);
+	EVP_MAC_free(worker->xex_b2b);
+	EVP_MAC_free(worker->xex_sip);
     EVP_CIPHER_CTX_free(worker->ecb_enc);
     EVP_CIPHER_CTX_free(worker->ecb_dec);
     EVP_CIPHER_CTX_free(worker->xts_data_enc);
@@ -284,7 +313,7 @@ void fde_ratchet_blake3_update(uint8_t state[32],
     blake3_hasher_finalize(&hasher, state, 32);
 }
 
-int fde_ratchet_xex_sha3_update(fde_worker *worker, uint8_t tweak[16],
+int fde_ratchet_xex_unkeyed_update(fde_worker *worker, uint8_t tweak[16],
                                 const uint8_t sector[16],
                                 const uint8_t index[16],
                                 const uint8_t state[16]) {
@@ -300,6 +329,96 @@ int fde_ratchet_xex_sha3_update(fde_worker *worker, uint8_t tweak[16],
 	}
 	memcpy(tweak, out, 16 * sizeof(uint8_t));
 	return 0;
+}
+
+int fde_ratchet_xex_keyed_update(fde_worker *worker, uint8_t tweak[16],
+                                 const uint8_t sector[16],
+                                 const uint8_t index[16],
+                                 const uint8_t state[16],
+                                 fde_xex_hash_fn hash_fn) {
+    uint8_t in[48];
+	if (worker == NULL || tweak == NULL || sector == NULL || index == NULL ||
+		state == NULL || hash_fn == NULL) {
+		return -1;
+	}
+	memcpy(in, sector, 16 * sizeof(uint8_t));
+	memcpy(in + 16, index, 16 * sizeof(uint8_t));
+	memcpy(in + 32, state, 16 * sizeof(uint8_t));
+	return hash_fn(worker, in, sizeof(in), tweak);
+}
+
+/* Keyed BLAKE3 (vendored) as the XEX mask hash. */
+static int kh_blake3(fde_worker *worker, const uint8_t *input,
+					 size_t input_len, uint8_t out[16]) {
+	blake3_hasher hasher;
+	blake3_hasher_init_keyed(&hasher, worker->keys.hash_key);
+	blake3_hasher_update(&hasher, input, input_len);
+	blake3_hasher_finalize(&hasher, out, 16);
+	return 0;
+}
+
+/* KMAC-128 via EVP_MAC as the XEX mask hash (OpenSSL 3.x). */
+static int kh_kmac128(fde_worker *worker, const uint8_t *input,
+					  size_t input_len, uint8_t out[16]) {
+	size_t out_size = 16;
+	OSSL_PARAM params[] = {
+		OSSL_PARAM_construct_size_t(OSSL_MAC_PARAM_SIZE, &out_size),
+		OSSL_PARAM_construct_end()
+	};
+	if (EVP_MAC_init(worker->xex_kmac_ctx, worker->keys.hash_key,
+					 FDE_MASTER_KEY_BYTES, params) != 1 ||
+		EVP_MAC_update(worker->xex_kmac_ctx, input, input_len) != 1 ||
+		EVP_MAC_final(worker->xex_kmac_ctx, out, NULL, 16) != 1) {
+		return -1;
+	}
+	return 0;
+}
+
+/* Keyed BLAKE2b via EVP_MAC "BLAKE2BMAC"; the 64-byte MAC is truncated to
+ * the 16-byte mask (note: differs from blake2b(digest_size=16) used by the
+ * Python reference). */
+static int kh_blake2b(fde_worker *worker, const uint8_t *input,
+					  size_t input_len, uint8_t out[16]) {
+	uint8_t full[64];
+	size_t out_len = 0;
+	if (EVP_MAC_init(worker->xex_b2b_ctx, worker->keys.hash_key,
+					 FDE_MASTER_KEY_BYTES, NULL) != 1 ||
+		EVP_MAC_update(worker->xex_b2b_ctx, input, input_len) != 1 ||
+		EVP_MAC_final(worker->xex_b2b_ctx, full, &out_len, sizeof(full)) != 1) {
+		return -1;
+	}
+	memcpy(out, full, 16);
+	return 0;
+}
+
+/* SipHash-2-4 with 128-bit output via EVP_MAC "SIPHASH" (OpenSSL 3.x).
+ * Keyed by the first 16 bytes of hash_key; SipHash takes a 16-byte key. */
+static int kh_siphash128(fde_worker *worker, const uint8_t *input,
+						 size_t input_len, uint8_t out[16]) {
+	size_t out_size = 16;
+	OSSL_PARAM params[] = {
+		OSSL_PARAM_construct_size_t(OSSL_MAC_PARAM_SIZE, &out_size),
+		OSSL_PARAM_construct_end()
+	};
+	if (EVP_MAC_init(worker->xex_sip_ctx, worker->keys.hash_key, 16,
+					 params) != 1 ||
+		EVP_MAC_update(worker->xex_sip_ctx, input, input_len) != 1 ||
+		EVP_MAC_final(worker->xex_sip_ctx, out, NULL, 16) != 1) {
+		return -1;
+	}
+	return 0;
+}
+
+/* Map an XEX scheme to its mask hash. NULL if the scheme is not XEX. */
+static fde_xex_hash_fn xex_hash_for_scheme(fde_scheme scheme) {
+	switch (scheme) {
+	case FDE_RATCHET_XEX_SHA3:    return uh_sha3_256;
+	case FDE_RATCHET_XEX_BLAKE2B: return kh_blake2b;
+	case FDE_RATCHET_XEX_BLAKE3:  return kh_blake3;
+	case FDE_RATCHET_XEX_SIPHASH: return kh_siphash128;
+	case FDE_RATCHET_XEX_KMAC:    return kh_kmac128;
+	default:                      return NULL;
+	}
 }
 
 static int indices_are_consecutive(const uint32_t *indices, size_t blocks) {
@@ -496,22 +615,28 @@ static int ratchet_blake3_crypt(fde_worker *worker, fde_scheme scheme,
     return 0;
 }
 
-static int ratchet_xex_sha3_crypt(fde_worker *worker,
+static int ratchet_xex_crypt(fde_worker *worker, fde_scheme scheme,
 								  int encrypt, const uint8_t *input,
 								  const uint32_t *indices, uint64_t sector,
 								  size_t blocks, uint8_t *output,
 								  fde_profile *profile) {
     EVP_CIPHER_CTX *ctx = encrypt ? worker->ecb_enc : worker->ecb_dec;
+	fde_xex_hash_fn hash_fn = xex_hash_for_scheme(scheme);
 	uint8_t state[16] = {0};
+	uint8_t sector_bytes[16];
 	uint64_t start = profile == NULL ? 0 : now_ns();
+	if (hash_fn == NULL) {
+		return -1;
+	}
+	encode_u64_le(sector, sector_bytes);
 	for (size_t j = 0; j < blocks; ++j) {
 		const uint8_t *source = input + 16 * j;
 		uint8_t xor_source[16], xor_destination[16], *destination = output + 16 * j;
-		uint8_t sector_bytes[16], index[16], tweak[16];
+		uint8_t index[16], tweak[16];
 		start = profile == NULL ? 0 : now_ns();
-		encode_u64_le(sector, sector_bytes);
 		encode_u32_le(index_at(indices, j), index);
-		if (fde_ratchet_xex_sha3_update(worker, tweak, sector_bytes, index, state) != 0) {
+		if (fde_ratchet_xex_keyed_update(worker, tweak, sector_bytes, index,
+									   state, hash_fn) != 0) {
 			return -1;
 		}
 		if (profile != NULL) {
@@ -563,7 +688,11 @@ int fde_encrypt(fde_worker *worker, fde_scheme scheme,
         return ratchet_blake3_crypt(worker, scheme, 1, plaintext, indices,
                                     sector, blocks, ciphertext, profile);
 	case FDE_RATCHET_XEX_SHA3:
-		return ratchet_xex_sha3_crypt(worker, 1, plaintext, indices,
+	case FDE_RATCHET_XEX_BLAKE2B:
+	case FDE_RATCHET_XEX_BLAKE3:
+	case FDE_RATCHET_XEX_SIPHASH:
+	case FDE_RATCHET_XEX_KMAC:
+		return ratchet_xex_crypt(worker, scheme, 1, plaintext, indices,
 									  sector, blocks, ciphertext, profile);
     default:
         return -1;
@@ -593,7 +722,11 @@ int fde_decrypt(fde_worker *worker, fde_scheme scheme,
         return ratchet_blake3_crypt(worker, scheme, 0, ciphertext, indices,
                                     sector, blocks, plaintext, profile);
 	case FDE_RATCHET_XEX_SHA3:
-		return ratchet_xex_sha3_crypt(worker, 0, ciphertext, indices,
+	case FDE_RATCHET_XEX_BLAKE2B:
+	case FDE_RATCHET_XEX_BLAKE3:
+	case FDE_RATCHET_XEX_SIPHASH:
+	case FDE_RATCHET_XEX_KMAC:
+		return ratchet_xex_crypt(worker, scheme, 0, ciphertext, indices,
 									  sector, blocks, plaintext, profile);
     default:
         return -1;
@@ -765,7 +898,8 @@ int fde_decrypt_target(fde_worker *worker, fde_scheme scheme,
         }
 		return 0;
     }
-	if (scheme == FDE_RATCHET_XEX_SHA3) {
+	if (xex_hash_for_scheme(scheme) != NULL) {
+		fde_xex_hash_fn hash_fn = xex_hash_for_scheme(scheme);
 		uint8_t state[16] = {0};
 		if (target > 0) {
 			memcpy(state, ciphertext + 16 * (target - 1), 16);
@@ -774,7 +908,8 @@ int fde_decrypt_target(fde_worker *worker, fde_scheme scheme,
 		uint8_t tweak[16];
 		encode_u64_le(sector, sector_bytes);
 		encode_u32_le(index_at(indices, target), index);
-		if (fde_ratchet_xex_sha3_update(worker, tweak, sector_bytes, index, state) != 0) {
+		if (fde_ratchet_xex_keyed_update(worker, tweak, sector_bytes, index,
+									   state, hash_fn) != 0) {
 			return -1;
 		}
 		uint8_t xor_source[16];
