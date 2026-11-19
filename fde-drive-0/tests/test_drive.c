@@ -63,7 +63,11 @@ static const struct {
 	{"ctr-blake3", FDE_RATCHET_CTR_BLAKE3},
 	{"cbc-aes", FDE_RATCHET_CBC_AES},
 	{"cbc-blake3", FDE_RATCHET_CBC_BLAKE3},
-	{"xex-sha3", FDE_RATCHET_XEX_SHA3}
+	{"xex-sha3", FDE_RATCHET_XEX_SHA3},
+	{"xex-blake2b", FDE_RATCHET_XEX_BLAKE2B},
+	{"xex-blake3", FDE_RATCHET_XEX_BLAKE3},
+	{"xex-siphash", FDE_RATCHET_XEX_SIPHASH},
+	{"xex-kmac", FDE_RATCHET_XEX_KMAC}
 };
 
 int parse_scheme(const char *arg, fde_scheme *out) {

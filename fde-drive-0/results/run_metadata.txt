@@ -1,5 +1,5 @@
 benchmark_profile=full
-unix_time=1788268456
+unix_time=1795073608
 logical_cpus=16
 tsc_available=1
-benchmark_sink=73
+benchmark_sink=5
