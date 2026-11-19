@@ -1,0 +1,13 @@
+test_aes_vector (test_correctness.Correctness.test_aes_vector) ... ok
+test_all_schemes (test_correctness.Correctness.test_all_schemes) ... ok
+test_cbc_mac (test_correctness.Correctness.test_cbc_mac) ... ok
+test_hash_vectors (test_correctness.Correctness.test_hash_vectors) ... ok
+test_local_recovery (test_correctness.Correctness.test_local_recovery) ... ok
+test_lrw_document_field (test_correctness.Correctness.test_lrw_document_field) ... ok
+test_validation (test_correctness.Correctness.test_validation) ... ok
+test_xts_library (test_correctness.Correctness.test_xts_library) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.165s
+
+OK

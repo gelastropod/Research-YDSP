@@ -1,0 +1,14 @@
+throughput_raw.csv: 440 rows, valid
+components.csv: 22 rows, valid
+setup_raw.csv: 220 rows, valid
+hash_raw.csv: 140 rows, valid
+random_access_raw.csv: 13200 rows, valid
+thread_raw.csv: 594 rows, valid
+within_sector_raw.csv: 270 rows, valid
+recovery.csv: 11 rows, valid
+optimization_raw.csv: 220 rows, valid
+Eight correctness tests passed; native LRW matches 100 independent document-field evaluations.
+Pinned Python 3.12 environment: complete smoke pipeline and explicit-key example passed.
+Report benchmark completed all four RQs; ten 1 MiB throughput trials, not full 64 MiB passes.
+Six figures reviewed; README image links checked.
+Only Linux executed locally; Windows/macOS CI supplied, not claimed executed.
