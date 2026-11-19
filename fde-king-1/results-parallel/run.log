@@ -1,0 +1,603 @@
+{
+  "source_sha256": {
+    "analyse.py": "70d5a1af629fc7ce90dc1e280c7bb9a7e7ddee9f0612d82adb545296dd85c375",
+    "benchmark.py": "2f6d3d0a9634266ab41d0c682f141216340f56cfec2a5bd42295e52cc350a0b2",
+    "engine.py": "009b36823717d7348f7aab8c475f01256808d5d91ab9349df3980fdc8dd52690",
+    "masks.py": "30d5892ef3f3d53cf878f24b00ca0198b01f48ebbc3721b0623e587eb2b0692b",
+    "reference.py": "6b3268f90b9b4737dde5a7c7c6def9c2fc35b9cfdf0ece297eae776c45891364",
+    "statistics.py": "bc311b7eb64a825e80d6f5dd2b09170e86a4cc9ef91fa93980ca9d3a30c0529c",
+    "__init__.py": "711b0d501fb034d4528b047102ed1a6595279c28996165e23bdb18e1fa9b8798"
+  },
+  "timestamp_utc": "2026-11-19T05:40:02Z",
+  "python": "3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0]",
+  "platform": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+  "cpu_model": "13th Gen Intel(R) Core(TM) i7-1365U",
+  "logical_cpus": 12,
+  "affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "frequency_khz_snapshot": "not exposed",
+  "execution": "CPU only; no GPU/CUDA",
+  "gil_enabled": true,
+  "aes_ni_available": true,
+  "clmul_available": true,
+  "openssl": "OpenSSL 4.0.1 9 Jun 2026",
+  "packages": {
+    "cryptography": "50.0.0",
+    "pycryptodome": "4.5.0",
+    "blake3": "1.0.11",
+    "PyNaCl": "1.6.2",
+    "numpy": "2.3.5",
+    "matplotlib": "3.10.8",
+    "pandas": "2.2.3"
+  },
+  "clock": "perf_counter_ns",
+  "timer_resolution_ns": 1.0,
+  "conditions": "Frequency/power/background load not controlled; snapshots do not prove constant clock",
+  "key_fixture": "Shared public benchmark fixture; not production keys",
+  "config": {
+    "preset": "report",
+    "rqs": [
+      4
+    ],
+    "schemes": [
+      "ecb_bulk",
+      "xts_library",
+      "xts_manual_ni",
+      "xex_blake2s",
+      "cbc_mac",
+      "lrw_horner",
+      "lrw_precompute"
+    ],
+    "sessions": 6,
+    "work_mib": [
+      1
+    ],
+    "sector_sizes": [
+      512,
+      4096
+    ],
+    "workers": [
+      1,
+      2,
+      4
+    ],
+    "thread_kib": [
+      256.0,
+      1024.0
+    ],
+    "repeats": 10,
+    "thread_repeats": 5,
+    "profile_rounds": 500,
+    "hash_calls": 10000,
+    "read_samples": 200,
+    "optimization_repeats": 10,
+    "optimization_rounds": 50,
+    "setup_repeats": 20,
+    "within_sectors": 8,
+    "bootstrap": 10000,
+    "seed": 20261119,
+    "disk_bytes": 67108864
+  }
+}
+Fresh-process session 1/6
+RQ4 xex_blake2s, 1024 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 1024 KiB trials: 1/5; elapsed 2.0s; remaining ~7.9s
+RQ4 xex_blake2s 1024 KiB trials: 2/5; elapsed 3.9s; remaining ~5.9s
+RQ4 xex_blake2s 1024 KiB trials: 3/5; elapsed 6.1s; remaining ~4.1s
+RQ4 xex_blake2s 1024 KiB trials: 4/5; elapsed 8.0s; remaining ~2.0s
+RQ4 xex_blake2s 1024 KiB trials: 5/5; elapsed 10.0s; remaining ~0.0s
+RQ4 cbc_mac, 1024 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 1024 KiB trials: 1/5; elapsed 3.7s; remaining ~14.7s
+RQ4 cbc_mac 1024 KiB trials: 2/5; elapsed 7.4s; remaining ~11.1s
+RQ4 cbc_mac 1024 KiB trials: 3/5; elapsed 10.8s; remaining ~7.2s
+RQ4 cbc_mac 1024 KiB trials: 4/5; elapsed 14.3s; remaining ~3.6s
+RQ4 cbc_mac 1024 KiB trials: 5/5; elapsed 17.9s; remaining ~0.0s
+RQ4 xex_blake2s, 256 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 256 KiB trials: 1/5; elapsed 0.5s; remaining ~1.9s
+RQ4 xex_blake2s 256 KiB trials: 2/5; elapsed 0.9s; remaining ~1.4s
+RQ4 xex_blake2s 256 KiB trials: 3/5; elapsed 1.4s; remaining ~0.9s
+RQ4 xex_blake2s 256 KiB trials: 4/5; elapsed 1.9s; remaining ~0.5s
+RQ4 xex_blake2s 256 KiB trials: 5/5; elapsed 2.3s; remaining ~0.0s
+RQ4 lrw_precompute, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 256 KiB trials: 1/5; elapsed 1.3s; remaining ~5.4s
+RQ4 lrw_precompute 256 KiB trials: 2/5; elapsed 2.6s; remaining ~3.9s
+RQ4 lrw_precompute 256 KiB trials: 3/5; elapsed 4.0s; remaining ~2.7s
+RQ4 lrw_precompute 256 KiB trials: 4/5; elapsed 5.3s; remaining ~1.3s
+RQ4 lrw_precompute 256 KiB trials: 5/5; elapsed 6.7s; remaining ~0.0s
+RQ4 xts_manual_ni, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 1024 KiB trials: 1/5; elapsed 0.1s; remaining ~0.6s
+RQ4 xts_manual_ni 1024 KiB trials: 2/5; elapsed 0.3s; remaining ~0.5s
+RQ4 xts_manual_ni 1024 KiB trials: 3/5; elapsed 0.5s; remaining ~0.3s
+RQ4 xts_manual_ni 1024 KiB trials: 4/5; elapsed 0.6s; remaining ~0.2s
+RQ4 xts_manual_ni 1024 KiB trials: 5/5; elapsed 0.8s; remaining ~0.0s
+RQ4 lrw_precompute, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 1024 KiB trials: 1/5; elapsed 5.2s; remaining ~20.8s
+RQ4 lrw_precompute 1024 KiB trials: 2/5; elapsed 10.5s; remaining ~15.8s
+RQ4 lrw_precompute 1024 KiB trials: 3/5; elapsed 15.9s; remaining ~10.6s
+RQ4 lrw_precompute 1024 KiB trials: 4/5; elapsed 21.4s; remaining ~5.3s
+RQ4 lrw_precompute 1024 KiB trials: 5/5; elapsed 26.9s; remaining ~0.0s
+RQ4 ecb_bulk, 1024 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 2/5; elapsed 0.0s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk 1024 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk, 256 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 4/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 5/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_library 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 2/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library 1024 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_manual_ni, 256 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.2s
+RQ4 xts_manual_ni 256 KiB trials: 2/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 3/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 4/5; elapsed 0.2s; remaining ~0.0s
+RQ4 xts_manual_ni 256 KiB trials: 5/5; elapsed 0.2s; remaining ~0.0s
+RQ4 lrw_horner, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 1024 KiB trials: 1/5; elapsed 5.5s; remaining ~22.1s
+RQ4 lrw_horner 1024 KiB trials: 2/5; elapsed 13.4s; remaining ~20.2s
+RQ4 lrw_horner 1024 KiB trials: 3/5; elapsed 21.2s; remaining ~14.1s
+RQ4 lrw_horner 1024 KiB trials: 4/5; elapsed 28.8s; remaining ~7.2s
+RQ4 lrw_horner 1024 KiB trials: 5/5; elapsed 36.1s; remaining ~0.0s
+RQ4 cbc_mac, 256 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 256 KiB trials: 1/5; elapsed 1.4s; remaining ~5.5s
+RQ4 cbc_mac 256 KiB trials: 2/5; elapsed 2.6s; remaining ~3.9s
+RQ4 cbc_mac 256 KiB trials: 3/5; elapsed 3.9s; remaining ~2.6s
+RQ4 cbc_mac 256 KiB trials: 4/5; elapsed 5.1s; remaining ~1.3s
+RQ4 cbc_mac 256 KiB trials: 5/5; elapsed 6.5s; remaining ~0.0s
+RQ4 lrw_horner, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 256 KiB trials: 1/5; elapsed 1.9s; remaining ~7.7s
+RQ4 lrw_horner 256 KiB trials: 2/5; elapsed 3.8s; remaining ~5.8s
+RQ4 lrw_horner 256 KiB trials: 3/5; elapsed 5.7s; remaining ~3.8s
+RQ4 lrw_horner 256 KiB trials: 4/5; elapsed 7.6s; remaining ~1.9s
+RQ4 lrw_horner 256 KiB trials: 5/5; elapsed 9.6s; remaining ~0.0s
+RQ4 xts_library, 256 KiB: pool/key setup and warm-up
+RQ4 xts_library 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 4/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+Fresh-process session 2/6
+RQ4 cbc_mac, 256 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 256 KiB trials: 1/5; elapsed 1.1s; remaining ~4.3s
+RQ4 cbc_mac 256 KiB trials: 2/5; elapsed 2.1s; remaining ~3.2s
+RQ4 cbc_mac 256 KiB trials: 3/5; elapsed 3.1s; remaining ~2.1s
+RQ4 cbc_mac 256 KiB trials: 4/5; elapsed 4.1s; remaining ~1.0s
+RQ4 cbc_mac 256 KiB trials: 5/5; elapsed 5.1s; remaining ~0.0s
+RQ4 xts_manual_ni, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 1024 KiB trials: 1/5; elapsed 0.2s; remaining ~0.7s
+RQ4 xts_manual_ni 1024 KiB trials: 2/5; elapsed 0.3s; remaining ~0.5s
+RQ4 xts_manual_ni 1024 KiB trials: 3/5; elapsed 0.5s; remaining ~0.3s
+RQ4 xts_manual_ni 1024 KiB trials: 4/5; elapsed 0.7s; remaining ~0.2s
+RQ4 xts_manual_ni 1024 KiB trials: 5/5; elapsed 0.8s; remaining ~0.0s
+RQ4 lrw_precompute, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 1024 KiB trials: 1/5; elapsed 6.0s; remaining ~24.0s
+RQ4 lrw_precompute 1024 KiB trials: 2/5; elapsed 11.6s; remaining ~17.5s
+RQ4 lrw_precompute 1024 KiB trials: 3/5; elapsed 17.1s; remaining ~11.4s
+RQ4 lrw_precompute 1024 KiB trials: 4/5; elapsed 22.3s; remaining ~5.6s
+RQ4 lrw_precompute 1024 KiB trials: 5/5; elapsed 28.0s; remaining ~0.0s
+RQ4 ecb_bulk, 1024 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 2/5; elapsed 0.0s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk 1024 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_manual_ni, 256 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.2s
+RQ4 xts_manual_ni 256 KiB trials: 2/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 3/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 4/5; elapsed 0.2s; remaining ~0.0s
+RQ4 xts_manual_ni 256 KiB trials: 5/5; elapsed 0.2s; remaining ~0.0s
+RQ4 lrw_horner, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 256 KiB trials: 1/5; elapsed 1.3s; remaining ~5.3s
+RQ4 lrw_horner 256 KiB trials: 2/5; elapsed 2.7s; remaining ~4.0s
+RQ4 lrw_horner 256 KiB trials: 3/5; elapsed 4.0s; remaining ~2.6s
+RQ4 lrw_horner 256 KiB trials: 4/5; elapsed 5.3s; remaining ~1.3s
+RQ4 lrw_horner 256 KiB trials: 5/5; elapsed 6.6s; remaining ~0.0s
+RQ4 xts_library, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_library 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 2/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library 1024 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk, 256 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 4/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 5/5; elapsed 0.0s; remaining ~0.0s
+RQ4 lrw_precompute, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 256 KiB trials: 1/5; elapsed 1.3s; remaining ~5.2s
+RQ4 lrw_precompute 256 KiB trials: 2/5; elapsed 2.7s; remaining ~4.1s
+RQ4 lrw_precompute 256 KiB trials: 3/5; elapsed 4.2s; remaining ~2.8s
+RQ4 lrw_precompute 256 KiB trials: 4/5; elapsed 5.6s; remaining ~1.4s
+RQ4 lrw_precompute 256 KiB trials: 5/5; elapsed 6.9s; remaining ~0.0s
+RQ4 lrw_horner, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 1024 KiB trials: 1/5; elapsed 5.3s; remaining ~21.4s
+RQ4 lrw_horner 1024 KiB trials: 2/5; elapsed 10.8s; remaining ~16.2s
+RQ4 lrw_horner 1024 KiB trials: 3/5; elapsed 16.3s; remaining ~10.9s
+RQ4 lrw_horner 1024 KiB trials: 4/5; elapsed 21.9s; remaining ~5.5s
+RQ4 lrw_horner 1024 KiB trials: 5/5; elapsed 27.4s; remaining ~0.0s
+RQ4 xex_blake2s, 256 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 256 KiB trials: 1/5; elapsed 0.5s; remaining ~2.0s
+RQ4 xex_blake2s 256 KiB trials: 2/5; elapsed 1.0s; remaining ~1.5s
+RQ4 xex_blake2s 256 KiB trials: 3/5; elapsed 1.5s; remaining ~1.0s
+RQ4 xex_blake2s 256 KiB trials: 4/5; elapsed 2.0s; remaining ~0.5s
+RQ4 xex_blake2s 256 KiB trials: 5/5; elapsed 2.4s; remaining ~0.0s
+RQ4 xts_library, 256 KiB: pool/key setup and warm-up
+RQ4 xts_library 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 4/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 5/5; elapsed 0.0s; remaining ~0.0s
+RQ4 cbc_mac, 1024 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 1024 KiB trials: 1/5; elapsed 3.6s; remaining ~14.5s
+RQ4 cbc_mac 1024 KiB trials: 2/5; elapsed 7.8s; remaining ~11.6s
+RQ4 cbc_mac 1024 KiB trials: 3/5; elapsed 11.8s; remaining ~7.9s
+RQ4 cbc_mac 1024 KiB trials: 4/5; elapsed 15.5s; remaining ~3.9s
+RQ4 cbc_mac 1024 KiB trials: 5/5; elapsed 19.4s; remaining ~0.0s
+RQ4 xex_blake2s, 1024 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 1024 KiB trials: 1/5; elapsed 2.4s; remaining ~9.6s
+RQ4 xex_blake2s 1024 KiB trials: 2/5; elapsed 5.1s; remaining ~7.6s
+RQ4 xex_blake2s 1024 KiB trials: 3/5; elapsed 7.7s; remaining ~5.1s
+RQ4 xex_blake2s 1024 KiB trials: 4/5; elapsed 10.2s; remaining ~2.6s
+RQ4 xex_blake2s 1024 KiB trials: 5/5; elapsed 12.8s; remaining ~0.0s
+Fresh-process session 3/6
+RQ4 cbc_mac, 1024 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 1024 KiB trials: 1/5; elapsed 5.7s; remaining ~22.8s
+RQ4 cbc_mac 1024 KiB trials: 2/5; elapsed 11.2s; remaining ~16.7s
+RQ4 cbc_mac 1024 KiB trials: 3/5; elapsed 16.3s; remaining ~10.9s
+RQ4 cbc_mac 1024 KiB trials: 4/5; elapsed 21.5s; remaining ~5.4s
+RQ4 cbc_mac 1024 KiB trials: 5/5; elapsed 25.9s; remaining ~0.0s
+RQ4 cbc_mac, 256 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 256 KiB trials: 1/5; elapsed 1.1s; remaining ~4.3s
+RQ4 cbc_mac 256 KiB trials: 2/5; elapsed 2.1s; remaining ~3.1s
+RQ4 cbc_mac 256 KiB trials: 3/5; elapsed 3.1s; remaining ~2.1s
+RQ4 cbc_mac 256 KiB trials: 4/5; elapsed 4.1s; remaining ~1.0s
+RQ4 cbc_mac 256 KiB trials: 5/5; elapsed 5.3s; remaining ~0.0s
+RQ4 xts_manual_ni, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 1024 KiB trials: 1/5; elapsed 0.2s; remaining ~0.8s
+RQ4 xts_manual_ni 1024 KiB trials: 2/5; elapsed 0.4s; remaining ~0.6s
+RQ4 xts_manual_ni 1024 KiB trials: 3/5; elapsed 0.6s; remaining ~0.4s
+RQ4 xts_manual_ni 1024 KiB trials: 4/5; elapsed 0.7s; remaining ~0.2s
+RQ4 xts_manual_ni 1024 KiB trials: 5/5; elapsed 0.9s; remaining ~0.0s
+RQ4 lrw_horner, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 256 KiB trials: 1/5; elapsed 1.6s; remaining ~6.3s
+RQ4 lrw_horner 256 KiB trials: 2/5; elapsed 3.0s; remaining ~4.5s
+RQ4 lrw_horner 256 KiB trials: 3/5; elapsed 4.4s; remaining ~3.0s
+RQ4 lrw_horner 256 KiB trials: 4/5; elapsed 5.8s; remaining ~1.5s
+RQ4 lrw_horner 256 KiB trials: 5/5; elapsed 7.2s; remaining ~0.0s
+RQ4 xts_manual_ni, 256 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.2s
+RQ4 xts_manual_ni 256 KiB trials: 2/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 3/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 4/5; elapsed 0.2s; remaining ~0.0s
+RQ4 xts_manual_ni 256 KiB trials: 5/5; elapsed 0.2s; remaining ~0.0s
+RQ4 lrw_horner, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 1024 KiB trials: 1/5; elapsed 5.3s; remaining ~21.0s
+RQ4 lrw_horner 1024 KiB trials: 2/5; elapsed 10.9s; remaining ~16.4s
+RQ4 lrw_horner 1024 KiB trials: 3/5; elapsed 16.3s; remaining ~10.9s
+RQ4 lrw_horner 1024 KiB trials: 4/5; elapsed 21.7s; remaining ~5.4s
+RQ4 lrw_horner 1024 KiB trials: 5/5; elapsed 27.1s; remaining ~0.0s
+RQ4 xex_blake2s, 256 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 256 KiB trials: 1/5; elapsed 0.5s; remaining ~1.8s
+RQ4 xex_blake2s 256 KiB trials: 2/5; elapsed 0.9s; remaining ~1.4s
+RQ4 xex_blake2s 256 KiB trials: 3/5; elapsed 1.4s; remaining ~0.9s
+RQ4 xex_blake2s 256 KiB trials: 4/5; elapsed 1.9s; remaining ~0.5s
+RQ4 xex_blake2s 256 KiB trials: 5/5; elapsed 2.4s; remaining ~0.0s
+RQ4 xex_blake2s, 1024 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 1024 KiB trials: 1/5; elapsed 2.0s; remaining ~8.1s
+RQ4 xex_blake2s 1024 KiB trials: 2/5; elapsed 3.9s; remaining ~5.9s
+RQ4 xex_blake2s 1024 KiB trials: 3/5; elapsed 6.0s; remaining ~4.0s
+RQ4 xex_blake2s 1024 KiB trials: 4/5; elapsed 8.2s; remaining ~2.0s
+RQ4 xex_blake2s 1024 KiB trials: 5/5; elapsed 10.1s; remaining ~0.0s
+RQ4 lrw_precompute, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 1024 KiB trials: 1/5; elapsed 5.6s; remaining ~22.3s
+RQ4 lrw_precompute 1024 KiB trials: 2/5; elapsed 11.3s; remaining ~16.9s
+RQ4 lrw_precompute 1024 KiB trials: 3/5; elapsed 16.7s; remaining ~11.1s
+RQ4 lrw_precompute 1024 KiB trials: 4/5; elapsed 22.3s; remaining ~5.6s
+RQ4 lrw_precompute 1024 KiB trials: 5/5; elapsed 28.0s; remaining ~0.0s
+RQ4 lrw_precompute, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 256 KiB trials: 1/5; elapsed 1.4s; remaining ~5.5s
+RQ4 lrw_precompute 256 KiB trials: 2/5; elapsed 2.7s; remaining ~4.0s
+RQ4 lrw_precompute 256 KiB trials: 3/5; elapsed 4.0s; remaining ~2.7s
+RQ4 lrw_precompute 256 KiB trials: 4/5; elapsed 5.3s; remaining ~1.3s
+RQ4 lrw_precompute 256 KiB trials: 5/5; elapsed 6.6s; remaining ~0.0s
+RQ4 ecb_bulk, 256 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 4/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 5/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk, 1024 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 2/5; elapsed 0.0s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk 1024 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library, 256 KiB: pool/key setup and warm-up
+RQ4 xts_library 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 4/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_library 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 2/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library 1024 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+Fresh-process session 4/6
+RQ4 xts_library, 256 KiB: pool/key setup and warm-up
+RQ4 xts_library 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 4/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk, 256 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 4/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 5/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xex_blake2s, 1024 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 1024 KiB trials: 1/5; elapsed 2.0s; remaining ~8.1s
+RQ4 xex_blake2s 1024 KiB trials: 2/5; elapsed 4.0s; remaining ~6.0s
+RQ4 xex_blake2s 1024 KiB trials: 3/5; elapsed 6.0s; remaining ~4.0s
+RQ4 xex_blake2s 1024 KiB trials: 4/5; elapsed 7.9s; remaining ~2.0s
+RQ4 xex_blake2s 1024 KiB trials: 5/5; elapsed 9.9s; remaining ~0.0s
+RQ4 lrw_horner, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 256 KiB trials: 1/5; elapsed 1.3s; remaining ~5.1s
+RQ4 lrw_horner 256 KiB trials: 2/5; elapsed 2.6s; remaining ~3.9s
+RQ4 lrw_horner 256 KiB trials: 3/5; elapsed 4.2s; remaining ~2.8s
+RQ4 lrw_horner 256 KiB trials: 4/5; elapsed 5.5s; remaining ~1.4s
+RQ4 lrw_horner 256 KiB trials: 5/5; elapsed 7.5s; remaining ~0.0s
+RQ4 ecb_bulk, 1024 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 2/5; elapsed 0.0s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk 1024 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 lrw_precompute, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 256 KiB trials: 1/5; elapsed 1.8s; remaining ~7.2s
+RQ4 lrw_precompute 256 KiB trials: 2/5; elapsed 3.5s; remaining ~5.3s
+RQ4 lrw_precompute 256 KiB trials: 3/5; elapsed 5.1s; remaining ~3.4s
+RQ4 lrw_precompute 256 KiB trials: 4/5; elapsed 6.8s; remaining ~1.7s
+RQ4 lrw_precompute 256 KiB trials: 5/5; elapsed 8.4s; remaining ~0.0s
+RQ4 xex_blake2s, 256 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 256 KiB trials: 1/5; elapsed 0.5s; remaining ~2.2s
+RQ4 xex_blake2s 256 KiB trials: 2/5; elapsed 1.1s; remaining ~1.7s
+RQ4 xex_blake2s 256 KiB trials: 3/5; elapsed 1.7s; remaining ~1.1s
+RQ4 xex_blake2s 256 KiB trials: 4/5; elapsed 2.3s; remaining ~0.6s
+RQ4 xex_blake2s 256 KiB trials: 5/5; elapsed 2.8s; remaining ~0.0s
+RQ4 lrw_precompute, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 1024 KiB trials: 1/5; elapsed 6.0s; remaining ~24.0s
+RQ4 lrw_precompute 1024 KiB trials: 2/5; elapsed 12.0s; remaining ~17.9s
+RQ4 lrw_precompute 1024 KiB trials: 3/5; elapsed 17.5s; remaining ~11.6s
+RQ4 lrw_precompute 1024 KiB trials: 4/5; elapsed 23.0s; remaining ~5.8s
+RQ4 lrw_precompute 1024 KiB trials: 5/5; elapsed 28.8s; remaining ~0.0s
+RQ4 xts_library, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_library 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 2/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library 1024 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 cbc_mac, 256 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 256 KiB trials: 1/5; elapsed 0.9s; remaining ~3.8s
+RQ4 cbc_mac 256 KiB trials: 2/5; elapsed 1.9s; remaining ~2.8s
+RQ4 cbc_mac 256 KiB trials: 3/5; elapsed 2.8s; remaining ~1.9s
+RQ4 cbc_mac 256 KiB trials: 4/5; elapsed 3.6s; remaining ~0.9s
+RQ4 cbc_mac 256 KiB trials: 5/5; elapsed 4.6s; remaining ~0.0s
+RQ4 xts_manual_ni, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 1024 KiB trials: 1/5; elapsed 0.2s; remaining ~0.6s
+RQ4 xts_manual_ni 1024 KiB trials: 2/5; elapsed 0.3s; remaining ~0.5s
+RQ4 xts_manual_ni 1024 KiB trials: 3/5; elapsed 0.5s; remaining ~0.3s
+RQ4 xts_manual_ni 1024 KiB trials: 4/5; elapsed 0.6s; remaining ~0.2s
+RQ4 xts_manual_ni 1024 KiB trials: 5/5; elapsed 0.8s; remaining ~0.0s
+RQ4 cbc_mac, 1024 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 1024 KiB trials: 1/5; elapsed 3.7s; remaining ~15.0s
+RQ4 cbc_mac 1024 KiB trials: 2/5; elapsed 7.5s; remaining ~11.2s
+RQ4 cbc_mac 1024 KiB trials: 3/5; elapsed 11.3s; remaining ~7.5s
+RQ4 cbc_mac 1024 KiB trials: 4/5; elapsed 14.9s; remaining ~3.7s
+RQ4 cbc_mac 1024 KiB trials: 5/5; elapsed 18.7s; remaining ~0.0s
+RQ4 xts_manual_ni, 256 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.2s
+RQ4 xts_manual_ni 256 KiB trials: 2/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 3/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 4/5; elapsed 0.2s; remaining ~0.0s
+RQ4 xts_manual_ni 256 KiB trials: 5/5; elapsed 0.2s; remaining ~0.0s
+RQ4 lrw_horner, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 1024 KiB trials: 1/5; elapsed 5.5s; remaining ~22.1s
+RQ4 lrw_horner 1024 KiB trials: 2/5; elapsed 11.0s; remaining ~16.5s
+RQ4 lrw_horner 1024 KiB trials: 3/5; elapsed 16.5s; remaining ~11.0s
+RQ4 lrw_horner 1024 KiB trials: 4/5; elapsed 22.1s; remaining ~5.5s
+RQ4 lrw_horner 1024 KiB trials: 5/5; elapsed 27.7s; remaining ~0.0s
+Fresh-process session 5/6
+RQ4 cbc_mac, 256 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 256 KiB trials: 1/5; elapsed 0.8s; remaining ~3.3s
+RQ4 cbc_mac 256 KiB trials: 2/5; elapsed 1.7s; remaining ~2.6s
+RQ4 cbc_mac 256 KiB trials: 3/5; elapsed 2.6s; remaining ~1.7s
+RQ4 cbc_mac 256 KiB trials: 4/5; elapsed 3.5s; remaining ~0.9s
+RQ4 cbc_mac 256 KiB trials: 5/5; elapsed 4.5s; remaining ~0.0s
+RQ4 ecb_bulk, 256 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 4/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 5/5; elapsed 0.0s; remaining ~0.0s
+RQ4 cbc_mac, 1024 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 1024 KiB trials: 1/5; elapsed 3.9s; remaining ~15.7s
+RQ4 cbc_mac 1024 KiB trials: 2/5; elapsed 10.4s; remaining ~15.5s
+RQ4 cbc_mac 1024 KiB trials: 3/5; elapsed 14.9s; remaining ~9.9s
+RQ4 cbc_mac 1024 KiB trials: 4/5; elapsed 19.1s; remaining ~4.8s
+RQ4 cbc_mac 1024 KiB trials: 5/5; elapsed 23.2s; remaining ~0.0s
+RQ4 lrw_horner, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 1024 KiB trials: 1/5; elapsed 5.4s; remaining ~21.6s
+RQ4 lrw_horner 1024 KiB trials: 2/5; elapsed 11.6s; remaining ~17.3s
+RQ4 lrw_horner 1024 KiB trials: 3/5; elapsed 18.3s; remaining ~12.2s
+RQ4 lrw_horner 1024 KiB trials: 4/5; elapsed 24.9s; remaining ~6.2s
+RQ4 lrw_horner 1024 KiB trials: 5/5; elapsed 30.6s; remaining ~0.0s
+RQ4 xex_blake2s, 256 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 256 KiB trials: 1/5; elapsed 0.6s; remaining ~2.2s
+RQ4 xex_blake2s 256 KiB trials: 2/5; elapsed 1.1s; remaining ~1.6s
+RQ4 xex_blake2s 256 KiB trials: 3/5; elapsed 1.6s; remaining ~1.1s
+RQ4 xex_blake2s 256 KiB trials: 4/5; elapsed 2.2s; remaining ~0.6s
+RQ4 xex_blake2s 256 KiB trials: 5/5; elapsed 2.8s; remaining ~0.0s
+RQ4 xts_library, 256 KiB: pool/key setup and warm-up
+RQ4 xts_library 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 4/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 5/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk, 1024 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 2/5; elapsed 0.0s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk 1024 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_library 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 2/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library 1024 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 lrw_precompute, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 256 KiB trials: 1/5; elapsed 1.5s; remaining ~6.1s
+RQ4 lrw_precompute 256 KiB trials: 2/5; elapsed 3.0s; remaining ~4.6s
+RQ4 lrw_precompute 256 KiB trials: 3/5; elapsed 4.5s; remaining ~3.0s
+RQ4 lrw_precompute 256 KiB trials: 4/5; elapsed 5.9s; remaining ~1.5s
+RQ4 lrw_precompute 256 KiB trials: 5/5; elapsed 7.4s; remaining ~0.0s
+RQ4 xts_manual_ni, 256 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.2s
+RQ4 xts_manual_ni 256 KiB trials: 2/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 3/5; elapsed 0.2s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 4/5; elapsed 0.2s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 5/5; elapsed 0.3s; remaining ~0.0s
+RQ4 xex_blake2s, 1024 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 1024 KiB trials: 1/5; elapsed 2.5s; remaining ~9.9s
+RQ4 xex_blake2s 1024 KiB trials: 2/5; elapsed 4.9s; remaining ~7.3s
+RQ4 xex_blake2s 1024 KiB trials: 3/5; elapsed 7.2s; remaining ~4.8s
+RQ4 xex_blake2s 1024 KiB trials: 4/5; elapsed 9.6s; remaining ~2.4s
+RQ4 xex_blake2s 1024 KiB trials: 5/5; elapsed 12.1s; remaining ~0.0s
+RQ4 lrw_precompute, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 1024 KiB trials: 1/5; elapsed 7.7s; remaining ~31.0s
+RQ4 lrw_precompute 1024 KiB trials: 2/5; elapsed 14.9s; remaining ~22.3s
+RQ4 lrw_precompute 1024 KiB trials: 3/5; elapsed 21.9s; remaining ~14.6s
+RQ4 lrw_precompute 1024 KiB trials: 4/5; elapsed 28.1s; remaining ~7.0s
+RQ4 lrw_precompute 1024 KiB trials: 5/5; elapsed 34.0s; remaining ~0.0s
+RQ4 xts_manual_ni, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 1024 KiB trials: 1/5; elapsed 0.2s; remaining ~0.6s
+RQ4 xts_manual_ni 1024 KiB trials: 2/5; elapsed 0.3s; remaining ~0.5s
+RQ4 xts_manual_ni 1024 KiB trials: 3/5; elapsed 0.5s; remaining ~0.3s
+RQ4 xts_manual_ni 1024 KiB trials: 4/5; elapsed 0.6s; remaining ~0.2s
+RQ4 xts_manual_ni 1024 KiB trials: 5/5; elapsed 0.8s; remaining ~0.0s
+RQ4 lrw_horner, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 256 KiB trials: 1/5; elapsed 1.4s; remaining ~5.4s
+RQ4 lrw_horner 256 KiB trials: 2/5; elapsed 2.7s; remaining ~4.0s
+RQ4 lrw_horner 256 KiB trials: 3/5; elapsed 4.1s; remaining ~2.7s
+RQ4 lrw_horner 256 KiB trials: 4/5; elapsed 5.5s; remaining ~1.4s
+RQ4 lrw_horner 256 KiB trials: 5/5; elapsed 6.8s; remaining ~0.0s
+Fresh-process session 6/6
+RQ4 xts_library, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_library 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 2/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_library 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library 1024 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 lrw_precompute, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 256 KiB trials: 1/5; elapsed 1.2s; remaining ~4.9s
+RQ4 lrw_precompute 256 KiB trials: 2/5; elapsed 2.5s; remaining ~3.8s
+RQ4 lrw_precompute 256 KiB trials: 3/5; elapsed 3.7s; remaining ~2.5s
+RQ4 lrw_precompute 256 KiB trials: 4/5; elapsed 4.9s; remaining ~1.2s
+RQ4 lrw_precompute 256 KiB trials: 5/5; elapsed 6.1s; remaining ~0.0s
+RQ4 lrw_precompute, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_precompute 1024 KiB trials: 1/5; elapsed 5.0s; remaining ~19.9s
+RQ4 lrw_precompute 1024 KiB trials: 2/5; elapsed 10.0s; remaining ~14.9s
+RQ4 lrw_precompute 1024 KiB trials: 3/5; elapsed 15.1s; remaining ~10.0s
+RQ4 lrw_precompute 1024 KiB trials: 4/5; elapsed 20.0s; remaining ~5.0s
+RQ4 lrw_precompute 1024 KiB trials: 5/5; elapsed 25.3s; remaining ~0.0s
+RQ4 xts_manual_ni, 256 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.2s
+RQ4 xts_manual_ni 256 KiB trials: 2/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 3/5; elapsed 0.1s; remaining ~0.1s
+RQ4 xts_manual_ni 256 KiB trials: 4/5; elapsed 0.2s; remaining ~0.0s
+RQ4 xts_manual_ni 256 KiB trials: 5/5; elapsed 0.2s; remaining ~0.0s
+RQ4 cbc_mac, 1024 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 1024 KiB trials: 1/5; elapsed 3.8s; remaining ~15.0s
+RQ4 cbc_mac 1024 KiB trials: 2/5; elapsed 7.7s; remaining ~11.6s
+RQ4 cbc_mac 1024 KiB trials: 3/5; elapsed 11.2s; remaining ~7.5s
+RQ4 cbc_mac 1024 KiB trials: 4/5; elapsed 14.7s; remaining ~3.7s
+RQ4 cbc_mac 1024 KiB trials: 5/5; elapsed 18.2s; remaining ~0.0s
+RQ4 cbc_mac, 256 KiB: pool/key setup and warm-up
+RQ4 cbc_mac 256 KiB trials: 1/5; elapsed 0.8s; remaining ~3.3s
+RQ4 cbc_mac 256 KiB trials: 2/5; elapsed 1.7s; remaining ~2.6s
+RQ4 cbc_mac 256 KiB trials: 3/5; elapsed 2.6s; remaining ~1.7s
+RQ4 cbc_mac 256 KiB trials: 4/5; elapsed 3.4s; remaining ~0.8s
+RQ4 cbc_mac 256 KiB trials: 5/5; elapsed 4.3s; remaining ~0.0s
+RQ4 xex_blake2s, 256 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 256 KiB trials: 1/5; elapsed 0.5s; remaining ~2.0s
+RQ4 xex_blake2s 256 KiB trials: 2/5; elapsed 1.0s; remaining ~1.5s
+RQ4 xex_blake2s 256 KiB trials: 3/5; elapsed 1.5s; remaining ~1.0s
+RQ4 xex_blake2s 256 KiB trials: 4/5; elapsed 2.0s; remaining ~0.5s
+RQ4 xex_blake2s 256 KiB trials: 5/5; elapsed 2.5s; remaining ~0.0s
+RQ4 lrw_horner, 1024 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 1024 KiB trials: 1/5; elapsed 5.4s; remaining ~21.5s
+RQ4 lrw_horner 1024 KiB trials: 2/5; elapsed 10.6s; remaining ~16.0s
+RQ4 lrw_horner 1024 KiB trials: 3/5; elapsed 15.9s; remaining ~10.6s
+RQ4 lrw_horner 1024 KiB trials: 4/5; elapsed 21.2s; remaining ~5.3s
+RQ4 lrw_horner 1024 KiB trials: 5/5; elapsed 26.7s; remaining ~0.0s
+RQ4 ecb_bulk, 256 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 4/5; elapsed 0.0s; remaining ~0.0s
+RQ4 ecb_bulk 256 KiB trials: 5/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xex_blake2s, 1024 KiB: pool/key setup and warm-up
+RQ4 xex_blake2s 1024 KiB trials: 1/5; elapsed 1.9s; remaining ~7.7s
+RQ4 xex_blake2s 1024 KiB trials: 2/5; elapsed 4.0s; remaining ~5.9s
+RQ4 xex_blake2s 1024 KiB trials: 3/5; elapsed 7.1s; remaining ~4.7s
+RQ4 xex_blake2s 1024 KiB trials: 4/5; elapsed 10.9s; remaining ~2.7s
+RQ4 xex_blake2s 1024 KiB trials: 5/5; elapsed 17.0s; remaining ~0.0s
+RQ4 xts_library, 256 KiB: pool/key setup and warm-up
+RQ4 xts_library 256 KiB trials: 1/5; elapsed 0.0s; remaining ~0.1s
+RQ4 xts_library 256 KiB trials: 2/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 3/5; elapsed 0.0s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 xts_library 256 KiB trials: 5/5; elapsed 0.1s; remaining ~0.0s
+RQ4 lrw_horner, 256 KiB: pool/key setup and warm-up
+RQ4 lrw_horner 256 KiB trials: 1/5; elapsed 1.7s; remaining ~6.9s
+RQ4 lrw_horner 256 KiB trials: 2/5; elapsed 4.4s; remaining ~6.6s
+RQ4 lrw_horner 256 KiB trials: 3/5; elapsed 6.6s; remaining ~4.4s
+RQ4 lrw_horner 256 KiB trials: 4/5; elapsed 8.7s; remaining ~2.2s
+RQ4 lrw_horner 256 KiB trials: 5/5; elapsed 10.6s; remaining ~0.0s
+RQ4 xts_manual_ni, 1024 KiB: pool/key setup and warm-up
+RQ4 xts_manual_ni 1024 KiB trials: 1/5; elapsed 0.2s; remaining ~0.9s
+RQ4 xts_manual_ni 1024 KiB trials: 2/5; elapsed 0.5s; remaining ~0.7s
+RQ4 xts_manual_ni 1024 KiB trials: 3/5; elapsed 0.7s; remaining ~0.5s
+RQ4 xts_manual_ni 1024 KiB trials: 4/5; elapsed 0.9s; remaining ~0.2s
+RQ4 xts_manual_ni 1024 KiB trials: 5/5; elapsed 1.2s; remaining ~0.0s
+RQ4 ecb_bulk, 1024 KiB: pool/key setup and warm-up
+RQ4 ecb_bulk 1024 KiB trials: 1/5; elapsed 0.0s; remaining ~0.2s
+RQ4 ecb_bulk 1024 KiB trials: 2/5; elapsed 0.1s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 3/5; elapsed 0.1s; remaining ~0.1s
+RQ4 ecb_bulk 1024 KiB trials: 4/5; elapsed 0.1s; remaining ~0.0s
+RQ4 ecb_bulk 1024 KiB trials: 5/5; elapsed 0.2s; remaining ~0.0s

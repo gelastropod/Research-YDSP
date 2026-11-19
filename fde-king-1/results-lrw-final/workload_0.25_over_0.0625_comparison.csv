@@ -1,0 +1,9 @@
+scheme,sector_size,direction,ratio,ci_low,ci_high,sessions,ci_scope,coverage_lower_bound,within_five_percent
+lrw_horner,512,decrypt,0.9584874740174198,0.909012345895071,1.0674207953272985,6,paired_launch_order_statistics,0.96875,False
+lrw_horner,512,encrypt,0.9704137619179489,0.9544679978829668,1.0456045256238196,6,paired_launch_order_statistics,0.96875,True
+lrw_horner,4096,decrypt,1.0040869195258884,0.879817633790031,1.0572678085161726,6,paired_launch_order_statistics,0.96875,False
+lrw_horner,4096,encrypt,0.9914370611371824,0.9407070528321106,1.0351868374067885,6,paired_launch_order_statistics,0.96875,False
+lrw_precompute,512,decrypt,0.9700761104235408,0.9417330524569935,1.044631987882561,6,paired_launch_order_statistics,0.96875,False
+lrw_precompute,512,encrypt,0.9871477504213679,0.9630216214788953,1.007578362178013,6,paired_launch_order_statistics,0.96875,True
+lrw_precompute,4096,decrypt,0.9825876702441365,0.9641915593108776,1.0247038209488972,6,paired_launch_order_statistics,0.96875,True
+lrw_precompute,4096,encrypt,1.0111716139244837,0.9543221247959645,1.0549942532428325,6,paired_launch_order_statistics,0.96875,False

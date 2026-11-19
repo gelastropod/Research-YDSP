@@ -1,0 +1,20 @@
+test_aes_vector (test_correctness.Correctness.test_aes_vector) ... ok
+test_all_schemes (test_correctness.Correctness.test_all_schemes) ... ok
+test_cbc_mac (test_correctness.Correctness.test_cbc_mac) ... ok
+test_hash_vectors (test_correctness.Correctness.test_hash_vectors) ... ok
+test_local_recovery (test_correctness.Correctness.test_local_recovery) ... ok
+test_lrw_document_field (test_correctness.Correctness.test_lrw_document_field) ... ok
+test_lrw_max_sector (test_correctness.Correctness.test_lrw_max_sector) ... ok
+test_lrw_precompute (test_correctness.Correctness.test_lrw_precompute) ... ok
+test_validation (test_correctness.Correctness.test_validation) ... ok
+test_xts_library (test_correctness.Correctness.test_xts_library) ... ok
+test_known_constant_series (test_statistics.StatisticalChecks.test_known_constant_series) ... ok
+test_launches_not_pooled_observations (test_statistics.StatisticalChecks.test_launches_not_pooled_observations) ... ok
+test_order_statistic_coverage (test_statistics.StatisticalChecks.test_order_statistic_coverage) ... ok
+test_paired_launch_ratios (test_statistics.StatisticalChecks.test_paired_launch_ratios) ... ok
+test_single_observation_has_no_interval (test_statistics.StatisticalChecks.test_single_observation_has_no_interval) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.326s
+
+OK

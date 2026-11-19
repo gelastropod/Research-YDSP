@@ -1,0 +1,33 @@
+scheme,dependent,median,ci_low,ci_high,sessions,samples,ci_scope,ci_replicates,coverage_lower_bound,ci_reliable,host,CPU
+xex_blake2s,False,322.078825,314.81195,335.9092,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+xex_blake3,False,324.95885,321.7282,336.97475,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+xex_blake2b,False,392.6459,386.3254500000001,405.6821,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+xex_siphash128,False,624.1633750000001,618.3229,658.6886999999999,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+lrw_horner,False,1646.0250999999998,1603.337,1722.8503,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+lrw_precompute,False,2778.201625,2714.312,2923.21015,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+cbc_mac,False,4394.93095,4250.61975,4572.38285,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+xex_kmac128,False,7669.3787,7385.122450000001,8000.65415,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+xex_blake2s,True,340.1796,334.6352,344.612,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+xex_blake3,True,356.776075,345.80395,370.20855,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+xex_blake2b,True,412.786375,399.67705,423.4585,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+xex_siphash128,True,633.410975,620.30895,674.2939,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+lrw_horner,True,1684.666575,1658.4078,1766.781,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+lrw_precompute,True,2825.84545,2766.7599,2943.55575,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+cbc_mac,True,4422.30625,4303.661749999999,4623.15355,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+xex_kmac128,True,7664.748799999999,7385.8058,7898.406150000001,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,native,Intel i7
+xex_blake2s,False,489.5402,436.17425,525.6597,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+xex_blake2b,False,620.104175,579.6352999999999,745.7531,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+xex_blake3,False,640.9687250000001,626.14665,711.45695,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+xex_siphash128,False,1364.029275,1311.6525,1402.3203,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+lrw_horner,False,3265.97875,3162.2573,3714.5062,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+lrw_precompute,False,5818.954650000001,5407.45535,6517.7837,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+cbc_mac,False,10253.061525,9548.58915,10974.566,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+xex_kmac128,False,17966.85485,17086.752099999998,19649.7755,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+xex_blake2s,True,535.1367,472.97385,665.546,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+xex_blake2b,True,620.192575,543.4819,641.8965000000001,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+xex_blake3,True,703.1442999999999,616.808,885.9067500000001,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+xex_siphash128,True,1452.1846,1404.4012,1491.41295,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+lrw_horner,True,3506.852475,3141.83495,3814.9142,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+lrw_precompute,True,5953.811725,5469.17205,6770.71735,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+cbc_mac,True,10382.0748,10023.8828,11378.61705,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon
+xex_kmac128,True,18021.138275,16860.67905,18366.95095,6,60,between_launch_order_statistics,6,0.96875,requires_iid_launches,local,Xeon

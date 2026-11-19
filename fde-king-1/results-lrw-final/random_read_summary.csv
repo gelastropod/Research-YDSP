@@ -1,0 +1,13 @@
+scheme,block,median,ci_low,ci_high,sessions,samples,ci_scope,ci_replicates,coverage_lower_bound,ci_reliable,ciphertext_bytes
+lrw_horner,1,6406.0,6263.0,6762.0,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,16
+lrw_horner,32,6359.5,6237.5,6760.0,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,32
+lrw_horner,64,6443.0,6272.5,6707.0,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,32
+lrw_horner,128,6326.5,6212.0,6727.0,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,32
+lrw_horner,192,6355.75,6146.0,6724.5,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,32
+lrw_horner,256,6427.25,6248.5,6782.0,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,32
+lrw_precompute,1,8345.5,8052.0,8510.5,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,16
+lrw_precompute,32,8048.25,7868.0,8181.0,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,32
+lrw_precompute,64,8153.75,7932.0,8504.5,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,32
+lrw_precompute,128,8096.0,7966.0,8315.5,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,32
+lrw_precompute,192,8110.75,7953.0,8401.0,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,32
+lrw_precompute,256,8139.5,8041.5,8409.5,6,300,between_launch_order_statistics,6,0.96875,requires_iid_launches,32
