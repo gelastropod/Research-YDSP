@@ -48,38 +48,53 @@ python scripts/plot_drive_throughput.py results/drive_encrypt_*.csv -o figures/s
 
 ### Key takeaways
 
-1. **The ratchet costs roughly 30% of drive throughput with AES and about 45% with BLAKE3,** compared with AES-XTS: 61 / 47 MB/s vs 86 MB/s when encrypting a 1 GiB drive.
+1. **The ratchet costs roughly 30% of drive throughput with AES and about 45% with BLAKE3,** compared with AES-XTS: 61 / 46 MB/s vs 86 MB/s when encrypting a 1 GiB drive.
 2. **The ratchet primitive sets the cost.** One AES-256 update takes 16.2 ns, while one BLAKE3 update takes 96.9 ns (about 6x slower). The random-access latencies match these per-update costs almost exactly.
 3. **CTR and CBC ratchet modes perform the same.** The two modes are within about 1–5% of each other in every test, so the choice of primitive matters and the choice of mode does not.
-4. **Random access within a sector costs O(block index) for ratcheted schemes.** Reaching block 256 takes about 4.3 µs with AES and about 24 µs with BLAKE3. ECB stays flat at about 107 ns.
-5. **On a real drive, part of the CPU gap is hidden by I/O.** In memory the ratchet is about 5x slower than manual XTS, but on the drive it is only about 1.4x slower, because disk I/O takes 34% of wall time.
-6. **The ratchet parallelizes well across sectors,** reaching about 5.5x at 8 threads, which is better than OpenSSL XTS (3.0x, limited by memory bandwidth).
+4. **Decryption costs the same as encryption.** The only exception is CBC decrypt, which is about 2–4% slower.
+5. **Among the XEX tweak hashes, SipHash is the fastest** (65 MB/s, 0.76x XTS) and slightly beats Ratchet-AES. KMAC is the slowest (16 MB/s, 0.19x XTS).
+6. **Random access within a sector costs O(block index) for ratcheted schemes.** Reaching block 256 takes about 4.3 µs with AES and about 24 µs with BLAKE3. ECB stays flat at about 107 ns.
+7. **The ratchet parallelizes well across sectors,** reaching about 5.5x at 8 threads, which is better than OpenSSL XTS (3.0x, limited by memory bandwidth).
 
 ### 1. Ratchet primitive cost (`ratchet_primitives.csv`)
 
 | Primitive | ns / update | TSC cycles / update |
 |---|---|---|
-| AES-256(K_G, K ⊕ C) | 16.2 | 61.5 |
-| BLAKE3(K ‖ C) | 96.9 | 367.4 |
+| Ratchet AES-256 | 20.7 | 78.7 |
+| Ratchet BLAKE3 | 116.9 | 443.3 |
+| XEX SHA3-256 (unkeyed) | 528.9 | 2006.0 |
+| XEX BLAKE2b-MAC | 354.3 | 1343.7 |
+| XEX keyed BLAKE3 | 115.9 | 439.7 |
+| XEX SipHash-2-4-128 | 80.8 | 306.4 |
+| XEX KMAC128 | 999.4 | 3790.6 |
+| XTS tweak doubling | 11.1 | 42.1 |
 
-BLAKE3 is about **6.0x** more expensive for each update.
+- Per update: XTS doubling (11 ns) < Ratchet AES (21) < SipHash (81) < BLAKE3 ratchet ≈ keyed BLAKE3 (116) < BLAKE2b-MAC (354) < SHA3-256 (529) < KMAC128 (999).
+- That is roughly a 90x spread between the cheapest and most expensive way to move the state forward.
+- The ranking matches the drive throughput ranking exactly. Tweak/state evolution decides drive speed once disk I/O is taken out.
 
 ### 2. Per-sector component breakdown (`component_breakdown.csv`, 500 iterations)
 
-| Implementation | Op | µs / sector (outer) | Data % | Evolution % |
-|---|---|---|---|---|
-| AES-ECB | enc | 12.3 | 100 | 0 |
-| AES-XTS-manual | enc | 22.2 | 61.8 | 37.9 |
-| Ratchet-CTR-AES | enc | 41.8 | 76.1 | 23.8 |
-| Ratchet-CBC-AES | enc / dec | 41.3 / 43.0 | 75.5 / 76.9 | 24.4 / 23.0 |
-| Ratchet-CTR-BLAKE3 | enc | 62.0 | 48.4 | 51.6 |
-| Ratchet-CBC-BLAKE3 | enc / dec | 61.8 / 63.5 | 48.0 / 49.7 | 51.9 / 50.2 |
-| AES-XTS-literal-indexed | enc | 193.1 | 4.2 | **95.8** |
+<table>
+  <tr><th>Implementation</th><th>Op</th><th>µs / sector</th><th>Data %</th><th>Evolution %</th><th>Seed %</th></tr>
+  <tr><td rowspan="2">AES-ECB</td><td>enc</td><td>12.3</td><td>100.0</td><td>0.0</td><td>0.00</td></tr>
+  <tr><td>dec</td><td>12.5</td><td>100.0</td><td>0.0</td><td>0.00</td></tr>
+  <tr><td rowspan="2">AES-XTS-manual</td><td>enc</td><td>22.2</td><td>61.8</td><td>37.9</td><td>0.29</td></tr>
+  <tr><td>dec</td><td>22.3</td><td>62.2</td><td>37.5</td><td>0.29</td></tr>
+  <tr><td rowspan="2">Ratchet-CTR-AES</td><td>enc</td><td>41.8</td><td>76.1</td><td>23.8</td><td>0.12</td></tr>
+  <tr><td>dec</td><td>41.9</td><td>76.1</td><td>23.8</td><td>0.12</td></tr>
+  <tr><td rowspan="2">Ratchet-CBC-AES</td><td>enc</td><td>41.3</td><td>75.5</td><td>24.4</td><td>0.12</td></tr>
+  <tr><td>dec</td><td>43.0</td><td>76.9</td><td>23.0</td><td>0.11</td></tr>
+  <tr><td rowspan="2">Ratchet-CTR-BLAKE3</td><td>enc</td><td>62.0</td><td>48.4</td><td>51.6</td><td>0.07</td></tr>
+  <tr><td>dec</td><td>62.1</td><td>48.3</td><td>51.6</td><td>0.07</td></tr>
+  <tr><td rowspan="2">Ratchet-CBC-BLAKE3</td><td>enc</td><td>61.8</td><td>48.0</td><td>51.9</td><td>0.08</td></tr>
+  <tr><td>dec</td><td>63.5</td><td>49.7</td><td>50.2</td><td>0.07</td></tr>
+  <tr><td>AES-XTS-literal-indexed</td><td>enc</td><td>193.1</td><td>4.2</td><td><b>95.8</b></td><td>0.02</td></tr>
+</table>
 
 - Seed derivation is negligible (under 0.3%).
 - In the AES ratchets, the data path dominates (about 76%). In the BLAKE3 ratchets, key evolution takes about half of the time.
-- In "literal-indexed" XTS, which recomputes the tweak from the index for every block, 96% of the time goes to tweak evolution. It is 8.7x slower than incremental XTS.
-- Decryption costs the same as encryption, except CBC decrypt, which is about 2–4% slower.
+- In "literal-indexed" XTS, which recomputes the tweak from the index for every block, 96% of the time goes to tweak evolution. It is 8.7x slower than incremental XTS. This file has an encrypt row only for this implementation.
 
 ### 3. Random access within a sector (`random_access.csv`, latency to reach block *k*)
 
@@ -113,28 +128,47 @@ Mean latency in ns (warm cache):
 - OpenSSL XTS and ECB are memory-bound at 8 threads. The ratchets are compute-bound, so they keep scaling.
 - Single-threaded, Ratchet-AES is about 27x slower than OpenSSL XTS and about 5x slower than manual XTS.
 
-### 5. Full-drive encryption, 1 GiB (`drive_encrypt_*.csv`, 262,144 sectors)
+### 5. Full-drive encryption, 1 GiB (`drive_encrypt_*.csv`, 262,144 sectors, encrypt only)
 
-| Scheme | Time (s) | Avg MB/s | vs XTS | Data % | Evolution % | Disk I/O % | Other % |
-|---|---|---|---|---|---|---|---|
-| ECB | 9.83 | **109.3** | 1.27x | 24.2 | 0 | 60.4 | 15.4 |
-| XTS | 12.45 | **86.2** | 1.00x | 18.5 | 11.8 | 47.1 | 22.5 |
-| Ratchet-CBC-AES | 17.47 | **61.5** | 0.71x | 38.8 | 12.1 | 33.9 | 15.2 |
-| Ratchet-CTR-AES | 17.64 | **60.9** | 0.71x | 39.3 | 12.0 | 33.7 | 15.0 |
-| Ratchet-CBC-BLAKE3 | 22.85 | **47.0** | 0.55x | 30.2 | 32.5 | 25.8 | 11.4 |
-| Ratchet-CTR-BLAKE3 | 22.86 | **47.0** | 0.54x | 30.5 | 32.7 | 25.3 | 11.4 |
-| XEX-SHA3 | 41.18 | **26.1** | 0.30x | 5.2 | **74.3** | 14.2 | 6.3 |
+<table>
+  <tr><th>Family</th><th>Scheme</th><th>Time (s)</th><th>Avg MB/s</th><th>vs XTS</th><th>Data %</th><th>Evolution %</th><th>Disk I/O %</th><th>Other %</th></tr>
+  <tr><td rowspan="2">Baseline</td><td>ECB</td><td>10.31</td><td><b>104.2</b></td><td>1.22x</td><td>23.0</td><td>0.0</td><td>62.8</td><td>14.2</td></tr>
+  <tr><td>XTS</td><td>12.55</td><td><b>85.5</b></td><td>1.00x</td><td>17.3</td><td>11.3</td><td>49.7</td><td>21.5</td></tr>
+  <tr><td rowspan="2">Ratchet-AES</td><td>CTR</td><td>17.67</td><td><b>60.8</b></td><td>0.71x</td><td>37.9</td><td>11.6</td><td>35.8</td><td>14.6</td></tr>
+  <tr><td>CBC</td><td>17.54</td><td><b>61.2</b></td><td>0.72x</td><td>37.3</td><td>11.9</td><td>35.9</td><td>14.8</td></tr>
+  <tr><td rowspan="2">Ratchet-BLAKE3</td><td>CTR</td><td>23.45</td><td><b>45.8</b></td><td>0.54x</td><td>29.8</td><td>31.9</td><td>27.0</td><td>11.2</td></tr>
+  <tr><td>CBC</td><td>23.37</td><td><b>45.9</b></td><td>0.54x</td><td>29.5</td><td>32.0</td><td>27.2</td><td>11.2</td></tr>
+  <tr><td rowspan="5">XEX (hashed tweak)</td><td>SipHash</td><td>16.48</td><td><b>65.2</b></td><td>0.76x</td><td>12.7</td><td>33.0</td><td>38.4</td><td>15.9</td></tr>
+  <tr><td>BLAKE3</td><td>18.51</td><td><b>58.0</b></td><td>0.68x</td><td>11.2</td><td>40.9</td><td>33.9</td><td>14.0</td></tr>
+  <tr><td>BLAKE2b</td><td>32.37</td><td><b>33.2</b></td><td>0.39x</td><td>6.5</td><td>65.2</td><td>20.2</td><td>8.1</td></tr>
+  <tr><td>SHA3</td><td>41.89</td><td><b>25.6</b></td><td>0.30x</td><td>4.9</td><td>72.8</td><td>16.1</td><td>6.2</td></tr>
+  <tr><td>KMAC</td><td>66.61</td><td><b>16.1</b></td><td>0.19x</td><td>3.0</td><td><b>82.5</b></td><td>10.7</td><td>3.8</td></tr>
+</table>
 
-- Throughput is steady across each run. For example, Ratchet-AES varies between 49 and 66 MB/s instantaneous and XTS between 65 and 94 MB/s.
-- As the cipher gets cheaper, disk I/O takes a larger share of the time: 14% for XEX-SHA3, 34% for Ratchet-AES, and 60% for ECB. ECB is mostly I/O-bound.
-- XEX-SHA3 is the slowest scheme by far, because SHA-3 tweak evolution takes three quarters of its wall time.
+Tweak/key evolution cost per sector on the drive:
+
+| Scheme | µs / sector |
+|---|---|
+| XTS | 5.4 |
+| Ratchet-AES | 7.8–8.0 |
+| XEX-SipHash | 20.7 |
+| Ratchet-BLAKE3 | 28.5 |
+| XEX-BLAKE3 | 28.9 |
+| XEX-BLAKE2b | 80.5 |
+| XEX-SHA3 | 116.3 |
+| XEX-KMAC | 209.6 |
+
+- Every run holds a steady rate (`schemes_throughput.png`), and no scheme degrades over the 1 GiB.
+- As the cipher gets cheaper, disk I/O takes a larger share of the time: about 11% for KMAC, 36% for Ratchet-AES, and 63% for ECB. ECB is mostly I/O-bound.
+- The XEX schemes spend little time on data (3–13%). The tweak hash decides their speed, ranked SipHash > BLAKE3 > BLAKE2b > SHA3 > KMAC.
+- Ratchet-BLAKE3 and XEX-BLAKE3 spend the same evolution time (about 28.5 µs per sector). XEX-BLAKE3 is still faster overall (58 vs 46 MB/s) because its data path is cheaper.
 
 `drive_throughput.csv` is a shorter 100 MB ratcheted run: 40.8 MB/s average, with disk I/O at 56% of wall time.
 
 ### 6. Long-run ratcheted AES-XTS drive test (`throughput_plot.png`, about 128 GB)
 
 - **0–3% of the device:** about 63 MB/s, with I/O at about 33% of wall time.
-- **3–65%:** about 49 MB/s, with regular dips to about 38 MB/s roughly every 3–5%. I/O rises to about 50%, with spikes at the dips.
+- **3–65%:** about 49 MB/s, with regular dips to about 38 MB/s. I/O rises to about 50%, with spikes at the dips.
 - **65–100%:** a step down to about 37 MB/s, with I/O at about 60%. After about 90%, frequent drops to about 8–10 MB/s appear, with I/O spikes up to about 90%.
 - The cumulative average ends at about **42 MB/s**.
-- The CPU side should be constant per sector. Every step and dip comes with a rise in the I/O share, so the degradation looks like it comes from the drive and not the cipher. Likely causes are SSD write-cache exhaustion or thermal throttling, but this is an inference I have not verified.
+- Every step and dip comes with a rise in the I/O share, so the slowdown looks like it comes from the drive and not the cipher. Likely causes are SSD write-cache exhaustion or thermal throttling, but this is an inference I have not verified.

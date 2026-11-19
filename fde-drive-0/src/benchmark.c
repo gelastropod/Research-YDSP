@@ -430,44 +430,57 @@ static int benchmark_breakdown(const char *directory, const fde_keys *keys,
     return 0;
 }
 
+static void write_primitive_row(FILE *file, const char *name, size_t iterations,
+                                size_t input_bytes, size_t output_bytes,
+                                uint64_t elapsed, uint64_t cycles) {
+    fprintf(file, "%s,%zu,%zu,%zu,%llu,%.6f,%.6f\n", name, iterations,
+            input_bytes, output_bytes, (unsigned long long)elapsed,
+            (double)elapsed / (double)iterations,
+            FDE_HAS_TSC ? (double)cycles / (double)iterations : 0);
+}
+
 static int benchmark_ratchet_primitives(const char *directory,
                                         const fde_keys *keys, int quick) {
     size_t iterations = quick ? 100000 : 1000000;
     uint8_t ciphertext[16];
     uint8_t aes_state[16];
     uint8_t blake_state[32];
+    uint8_t xex_tweak[16];
+    uint8_t xex_sector[16];
+    uint8_t xex_index[16];
+    uint8_t xts_tweak[16];
+    uint64_t cycle_start, start, elapsed, cycles;
+    int status = -1;
     FILE *file = open_result(directory, "ratchet_primitives.csv");
     fde_worker *worker = fde_worker_new(keys);
     if (file == NULL || worker == NULL) {
-        if (file != NULL) {
-            fclose(file);
-        }
-        fde_worker_free(worker);
-        return -1;
+        goto done;
     }
     fill_data(ciphertext, sizeof(ciphertext), 91);
     fill_data(aes_state, sizeof(aes_state), 92);
     fill_data(blake_state, sizeof(blake_state), 93);
+    fill_data(xex_tweak, sizeof(xex_tweak), 94);
+    fill_data(xex_sector, sizeof(xex_sector), 95);
+    fill_data(xex_index, sizeof(xex_index), 96);
+    fill_data(xts_tweak, sizeof(xts_tweak), 97);
     fprintf(file,
             "primitive,iterations,input_bytes,output_state_bytes,total_ns,"
             "ns_per_update,tsc_cycles_per_update\n");
 
-    uint64_t cycle_start = read_tsc();
-    uint64_t start = now_ns();
+    /* Ratchet-AES: state = AES-256_KG(state XOR C) */
+    cycle_start = read_tsc();
+    start = now_ns();
     for (size_t i = 0; i < iterations; ++i) {
         if (fde_ratchet_aes_update(worker, aes_state, ciphertext) != 0) {
-            fclose(file);
-            fde_worker_free(worker);
-            return -1;
+            goto done;
         }
     }
-    uint64_t elapsed = now_ns() - start;
-    uint64_t cycles = read_tsc() - cycle_start;
-    fprintf(file, "AES-256(KG,KxorC),%zu,16,16,%llu,%.6f,%.6f\n",
-            iterations, (unsigned long long)elapsed,
-            (double)elapsed / (double)iterations,
-            FDE_HAS_TSC ? (double)cycles / (double)iterations : 0);
+    elapsed = now_ns() - start;
+    cycles = read_tsc() - cycle_start;
+    write_primitive_row(file, "AES-256(KG,KxorC)", iterations, 16, 16,
+                        elapsed, cycles);
 
+    /* Ratchet-BLAKE3: state = BLAKE3(state || C) */
     cycle_start = read_tsc();
     start = now_ns();
     for (size_t i = 0; i < iterations; ++i) {
@@ -475,14 +488,63 @@ static int benchmark_ratchet_primitives(const char *directory,
     }
     elapsed = now_ns() - start;
     cycles = read_tsc() - cycle_start;
-    fprintf(file, "BLAKE3(KconcatC),%zu,48,32,%llu,%.6f,%.6f\n",
-            iterations, (unsigned long long)elapsed,
-            (double)elapsed / (double)iterations,
-            FDE_HAS_TSC ? (double)cycles / (double)iterations : 0);
-    benchmark_sink ^= aes_state[0] ^ blake_state[0];
-    fclose(file);
+    write_primitive_row(file, "BLAKE3(KconcatC)", iterations, 48, 32,
+                        elapsed, cycles);
+
+    /* XEX: tweak = H(sector || index || prev)[0..16] for each mask hash.
+     * Feeding the tweak back as prev keeps each call dependent on the last. */
+    static const struct {
+        fde_scheme scheme;
+        const char *label;
+    } xex_hashes[] = {
+        {FDE_RATCHET_XEX_SHA3, "XEX-SHA3-256(SconcatIconcatC)"},
+        {FDE_RATCHET_XEX_BLAKE2B, "XEX-BLAKE2bMAC(SconcatIconcatC)"},
+        {FDE_RATCHET_XEX_BLAKE3, "XEX-BLAKE3-keyed(SconcatIconcatC)"},
+        {FDE_RATCHET_XEX_SIPHASH, "XEX-SipHash128(SconcatIconcatC)"},
+        {FDE_RATCHET_XEX_KMAC, "XEX-KMAC128(SconcatIconcatC)"},
+    };
+    for (size_t h = 0; h < sizeof(xex_hashes) / sizeof(xex_hashes[0]); ++h) {
+        fde_xex_hash_fn hash_fn = fde_xex_hash_for_scheme(xex_hashes[h].scheme);
+        if (hash_fn == NULL) {
+            goto done;
+        }
+        cycle_start = read_tsc();
+        start = now_ns();
+        for (size_t i = 0; i < iterations; ++i) {
+            if (fde_ratchet_xex_keyed_update(worker, xex_tweak, xex_sector,
+                                             xex_index, xex_tweak,
+                                             hash_fn) != 0) {
+                goto done;
+            }
+        }
+        elapsed = now_ns() - start;
+        cycles = read_tsc() - cycle_start;
+        write_primitive_row(file, xex_hashes[h].label, iterations, 48, 16,
+                            elapsed, cycles);
+        benchmark_sink ^= xex_tweak[0];
+    }
+
+    /* XTS: tweak = tweak * alpha in GF(2^128) */
+    cycle_start = read_tsc();
+    start = now_ns();
+    for (size_t i = 0; i < iterations; ++i) {
+        fde_xts_mul_alpha(xts_tweak);
+    }
+    elapsed = now_ns() - start;
+    cycles = read_tsc() - cycle_start;
+    write_primitive_row(file, "XTS-GF128(Txalpha)", iterations, 16, 16,
+                        elapsed, cycles);
+
+    benchmark_sink ^= aes_state[0] ^ blake_state[0] ^ xex_tweak[0] ^
+                      xts_tweak[0];
+    status = 0;
+
+done:
+    if (file != NULL) {
+        fclose(file);
+    }
     fde_worker_free(worker);
-    return 0;
+    return status;
 }
 
 static void thrash_cache(uint8_t *buffer, size_t bytes) {

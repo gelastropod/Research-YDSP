@@ -421,6 +421,10 @@ static fde_xex_hash_fn xex_hash_for_scheme(fde_scheme scheme) {
 	}
 }
 
+fde_xex_hash_fn fde_xex_hash_for_scheme(fde_scheme scheme) {
+	return xex_hash_for_scheme(scheme);
+}
+
 static int indices_are_consecutive(const uint32_t *indices, size_t blocks) {
     if (indices == NULL || blocks < 2) {
         return 1;

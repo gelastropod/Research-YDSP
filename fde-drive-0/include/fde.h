@@ -105,6 +105,8 @@ void fde_ratchet_blake3_update(uint8_t state[32],
 typedef int (*fde_xex_hash_fn)(fde_worker *worker, const uint8_t *input,
                                size_t input_len, uint8_t out[16]);
 
+fde_xex_hash_fn fde_xex_hash_for_scheme(fde_scheme scheme);
+
 int fde_ratchet_xex_unkeyed_update(fde_worker *worker, uint8_t tweak[16],
                                 const uint8_t sector[16],
                                 const uint8_t index[16],
