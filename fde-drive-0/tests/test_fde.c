@@ -1,6 +1,8 @@
 #include "fde.h"
 #include "blake3.h"
 
+#include <openssl/evp.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -167,6 +169,61 @@ static void test_target_recovery(fde_worker *worker) {
     }
 }
 
+/*
+ * GHASH has no public OpenSSL API, so the only sanity check is a
+ * cross-validation against AES-256-GCM: for a 96-bit IV the GCM tag is
+ * E_K(J0) XOR GHASH_H(A, C), with J0 = IV ‖ 0^31 ‖ 1. With empty plaintext,
+ * tag XOR E_K(J0) must equal GHASH_H(AAD, empty), which is fde_ghash with
+ * the context in the A position and lengths (384, 0).
+ */
+static void test_ghash_against_gcm(void) {
+    uint8_t key[32], zero[16] = {0}, H[16], iv[12], j0[16];
+    uint8_t aad[48], tag[16], expected[16], actual[16], dummy[16];
+    EVP_CIPHER_CTX *ctx;
+    int len = 0, tmplen = 0, ok;
+
+    for (int i = 0; i < 32; ++i) {
+        key[i] = (uint8_t)(0xa0u + i);
+    }
+    for (int i = 0; i < 12; ++i) {
+        iv[i] = (uint8_t)(0x50u + i);
+    }
+    for (int i = 0; i < 48; ++i) {
+        aad[i] = (uint8_t)(3 * i + 1);
+    }
+
+    ctx = EVP_CIPHER_CTX_new();
+    ok = ctx != NULL &&
+         EVP_EncryptInit_ex(ctx, EVP_aes_256_ecb(), NULL, key, NULL) == 1 &&
+         EVP_CIPHER_CTX_set_padding(ctx, 0) == 1 &&
+         EVP_EncryptUpdate(ctx, H, &len, zero, 16) == 1 && len == 16;
+    memcpy(j0, iv, 12);
+    memset(j0 + 12, 0, 3);
+    j0[15] = 1;
+    len = 0;
+    ok = ok && EVP_EncryptUpdate(ctx, expected, &len, j0, 16) == 1 &&
+         len == 16;
+    EVP_CIPHER_CTX_free(ctx);
+
+    ctx = EVP_CIPHER_CTX_new();
+    len = tmplen = 0;
+    ok = ok && ctx != NULL &&
+         EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, NULL, NULL) == 1 &&
+         EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, 12, NULL) == 1 &&
+         EVP_EncryptInit_ex(ctx, NULL, NULL, key, iv) == 1 &&
+         EVP_EncryptUpdate(ctx, NULL, &len, aad, 48) == 1 &&
+         EVP_EncryptFinal_ex(ctx, dummy, &tmplen) == 1 &&
+         EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, 16, tag) == 1;
+    EVP_CIPHER_CTX_free(ctx);
+
+    for (int i = 0; i < 16; ++i) {
+        expected[i] ^= tag[i];
+    }
+    ok = ok && fde_ghash(H, aad, sizeof(aad), NULL, 0, actual) == 0;
+    CHECK(ok && memcmp(expected, actual, 16) == 0,
+          "GHASH multiplication matches OpenSSL AES-256-GCM tag derivation");
+}
+
 int main(void) {
     fde_keys keys;
     fde_worker *worker;
@@ -182,6 +239,7 @@ int main(void) {
     test_xts_paths(worker);
     test_index_semantics(worker);
     test_target_recovery(worker);
+    test_ghash_against_gcm();
 
     fde_worker_free(worker);
     if (failures != 0) {
