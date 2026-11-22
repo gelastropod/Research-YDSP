@@ -18,9 +18,15 @@ struct fde_worker {
 	EVP_MAC *xex_kmac;
 	EVP_MAC *xex_b2b;
 	EVP_MAC *xex_sip;
+	EVP_MAC *xex_b2s;
+	EVP_MAC *xex_hmac;
+	EVP_MAC *xex_cmac;
 	EVP_MAC_CTX *xex_kmac_ctx;
 	EVP_MAC_CTX *xex_b2b_ctx;
 	EVP_MAC_CTX *xex_sip_ctx;
+	EVP_MAC_CTX *xex_b2s_ctx;
+	EVP_MAC_CTX *xex_hmac_ctx;
+	EVP_MAC_CTX *xex_cmac_ctx;
     EVP_CIPHER_CTX *ecb_enc;
     EVP_CIPHER_CTX *ecb_dec;
     EVP_CIPHER_CTX *xts_data_enc;
@@ -141,7 +147,11 @@ const char *fde_scheme_name(fde_scheme scheme) {
         "Ratchet-XEX-BLAKE2B",
         "Ratchet-XEX-BLAKE3",
         "Ratchet-XEX-SIPHASH",
-        "Ratchet-XEX-KMAC"
+        "Ratchet-XEX-KMAC",
+        "Ratchet-XEX-BLAKE2S",
+        "Ratchet-XEX-HMAC-SHA256",
+        "Ratchet-XEX-CMAC",
+        "Ratchet-XEX-GHASH"
     };
     return (scheme >= 0 && scheme < FDE_SCHEME_COUNT) ? names[scheme]
                                                        : "unknown";
@@ -197,6 +207,15 @@ fde_worker *fde_worker_new(const fde_keys *keys) {
 	worker->xex_sip = EVP_MAC_fetch(NULL, "SIPHASH", NULL);
 	worker->xex_sip_ctx = worker->xex_sip == NULL ? NULL
 						 : EVP_MAC_CTX_new(worker->xex_sip);
+	worker->xex_b2s = EVP_MAC_fetch(NULL, "BLAKE2SMAC", NULL);
+	worker->xex_b2s_ctx = worker->xex_b2s == NULL ? NULL
+						 : EVP_MAC_CTX_new(worker->xex_b2s);
+	worker->xex_hmac = EVP_MAC_fetch(NULL, "HMAC", NULL);
+	worker->xex_hmac_ctx = worker->xex_hmac == NULL ? NULL
+						  : EVP_MAC_CTX_new(worker->xex_hmac);
+	worker->xex_cmac = EVP_MAC_fetch(NULL, "CMAC", NULL);
+	worker->xex_cmac_ctx = worker->xex_cmac == NULL ? NULL
+						  : EVP_MAC_CTX_new(worker->xex_cmac);
     worker->ecb_enc = new_cipher_ctx(EVP_aes_256_ecb(), keys->ecb_key, 1);
     worker->ecb_dec = new_cipher_ctx(EVP_aes_256_ecb(), keys->ecb_key, 0);
     worker->xts_data_enc = new_cipher_ctx(EVP_aes_256_ecb(), keys->xts_k1, 1);
@@ -213,6 +232,8 @@ fde_worker *fde_worker_new(const fde_keys *keys) {
 
     if (worker->xex_md == NULL || worker->xex_kmac_ctx == NULL ||
 		worker->xex_b2b_ctx == NULL || worker->xex_sip_ctx == NULL ||
+		worker->xex_b2s_ctx == NULL || worker->xex_hmac_ctx == NULL ||
+		worker->xex_cmac_ctx == NULL ||
 		worker->ecb_enc == NULL || worker->ecb_dec == NULL ||
         worker->xts_data_enc == NULL || worker->xts_data_dec == NULL ||
         worker->xts_tweak_enc == NULL || worker->seed_enc == NULL ||
@@ -234,9 +255,15 @@ void fde_worker_free(fde_worker *worker) {
 	EVP_MAC_CTX_free(worker->xex_kmac_ctx);
 	EVP_MAC_CTX_free(worker->xex_b2b_ctx);
 	EVP_MAC_CTX_free(worker->xex_sip_ctx);
+	EVP_MAC_CTX_free(worker->xex_b2s_ctx);
+	EVP_MAC_CTX_free(worker->xex_hmac_ctx);
+	EVP_MAC_CTX_free(worker->xex_cmac_ctx);
 	EVP_MAC_free(worker->xex_kmac);
 	EVP_MAC_free(worker->xex_b2b);
 	EVP_MAC_free(worker->xex_sip);
+	EVP_MAC_free(worker->xex_b2s);
+	EVP_MAC_free(worker->xex_hmac);
+	EVP_MAC_free(worker->xex_cmac);
     EVP_CIPHER_CTX_free(worker->ecb_enc);
     EVP_CIPHER_CTX_free(worker->ecb_dec);
     EVP_CIPHER_CTX_free(worker->xts_data_enc);
@@ -374,21 +401,140 @@ static int kh_kmac128(fde_worker *worker, const uint8_t *input,
 	return 0;
 }
 
-/* Keyed BLAKE2b via EVP_MAC "BLAKE2BMAC"; the 64-byte MAC is truncated to
- * the 16-byte mask (note: differs from blake2b(digest_size=16) used by the
- * Python reference). */
+/* Keyed BLAKE2b via EVP_MAC "BLAKE2BMAC", native 16-byte digest
+ * (digest length nn = 16 in the parameter block, RFC 7693 §3.3). */
 static int kh_blake2b(fde_worker *worker, const uint8_t *input,
 					  size_t input_len, uint8_t out[16]) {
-	uint8_t full[64];
-	size_t out_len = 0;
+	size_t out_size = 16;
+	OSSL_PARAM params[] = {
+		OSSL_PARAM_construct_size_t(OSSL_MAC_PARAM_SIZE, &out_size),
+		OSSL_PARAM_construct_end()
+	};
 	if (EVP_MAC_init(worker->xex_b2b_ctx, worker->keys.hash_key,
-					 FDE_MASTER_KEY_BYTES, NULL) != 1 ||
+					 FDE_MASTER_KEY_BYTES, params) != 1 ||
 		EVP_MAC_update(worker->xex_b2b_ctx, input, input_len) != 1 ||
-		EVP_MAC_final(worker->xex_b2b_ctx, full, &out_len, sizeof(full)) != 1) {
+		EVP_MAC_final(worker->xex_b2b_ctx, out, NULL, 16) != 1) {
+		return -1;
+	}
+	return 0;
+}
+
+/* Keyed BLAKE2s via EVP_MAC "BLAKE2SMAC", native 16-byte digest. */
+static int kh_blake2s(fde_worker *worker, const uint8_t *input,
+					  size_t input_len, uint8_t out[16]) {
+	size_t out_size = 16;
+	OSSL_PARAM params[] = {
+		OSSL_PARAM_construct_size_t(OSSL_MAC_PARAM_SIZE, &out_size),
+		OSSL_PARAM_construct_end()
+	};
+	if (EVP_MAC_init(worker->xex_b2s_ctx, worker->keys.hash_key,
+					 FDE_MASTER_KEY_BYTES, params) != 1 ||
+		EVP_MAC_update(worker->xex_b2s_ctx, input, input_len) != 1 ||
+		EVP_MAC_final(worker->xex_b2s_ctx, out, NULL, 16) != 1) {
+		return -1;
+	}
+	return 0;
+}
+
+/* HMAC-SHA-256 truncated to the leftmost 128 bits (FIPS 198-1 §5). */
+static int kh_hmac_sha256(fde_worker *worker, const uint8_t *input,
+						  size_t input_len, uint8_t out[16]) {
+	uint8_t full[32];
+	size_t out_len = 0;
+	OSSL_PARAM params[] = {
+		OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_DIGEST,
+										 (char *)"SHA256", 0),
+		OSSL_PARAM_construct_end()
+	};
+	if (EVP_MAC_init(worker->xex_hmac_ctx, worker->keys.hash_key,
+					 FDE_MASTER_KEY_BYTES, params) != 1 ||
+		EVP_MAC_update(worker->xex_hmac_ctx, input, input_len) != 1 ||
+		EVP_MAC_final(worker->xex_hmac_ctx, full, &out_len, sizeof(full)) != 1) {
 		return -1;
 	}
 	memcpy(out, full, 16);
 	return 0;
+}
+
+/* AES-256-CMAC (NIST SP 800-38B). The 48-byte input is exactly three
+ * blocks, so no CMAC padding is involved. */
+static int kh_cmac(fde_worker *worker, const uint8_t *input,
+				   size_t input_len, uint8_t out[16]) {
+	OSSL_PARAM params[] = {
+		OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_CIPHER,
+										 (char *)"AES-256-CBC", 0),
+		OSSL_PARAM_construct_end()
+	};
+	if (EVP_MAC_init(worker->xex_cmac_ctx, worker->keys.hash_key,
+					 FDE_MASTER_KEY_BYTES, params) != 1 ||
+		EVP_MAC_update(worker->xex_cmac_ctx, input, input_len) != 1 ||
+		EVP_MAC_final(worker->xex_cmac_ctx, out, NULL, 16) != 1) {
+		return -1;
+	}
+	return 0;
+}
+
+/* GF(2^128) multiplication in GCM's reflected bit order, SP 800-38D §6.3
+ * Algorithm 1: computes x <- x * H with R = 11100001 ‖ 0^120. */
+static void ghash_mul(uint8_t x[16], const uint8_t H[16]) {
+	uint8_t z[16] = {0};
+	uint8_t v[16];
+	memcpy(v, H, 16);
+	for (int i = 0; i < 128; ++i) {
+		if ((x[i >> 3] >> (7 - (i & 7))) & 1) {
+			for (int j = 0; j < 16; ++j) {
+				z[j] ^= v[j];
+			}
+		}
+		int lsb = v[15] & 1;
+		for (int j = 15; j > 0; --j) {
+			v[j] = (uint8_t)((v[j] >> 1) | (uint8_t)(v[j - 1] << 7));
+		}
+		v[0] >>= 1;
+		if (lsb) {
+			v[0] ^= UINT8_C(0xE1);
+		}
+	}
+	memcpy(x, z, 16);
+}
+
+int fde_ghash(const uint8_t H[16], const uint8_t *aad, size_t aad_len,
+			  const uint8_t *ciphertext, size_t ciphertext_len,
+			  uint8_t out[16]) {
+	uint8_t y[16] = {0};
+	uint8_t lenblock[16] = {0};
+	uint64_t a_bits, c_bits;
+	if (H == NULL || out == NULL || aad_len % 16 != 0 ||
+		ciphertext_len % 16 != 0 || (aad_len != 0 && aad == NULL) ||
+		(ciphertext_len != 0 && ciphertext == NULL)) {
+		return -1;
+	}
+	for (size_t i = 0; i < aad_len; i += 16) {
+		xor_block(y, y, aad + i);
+		ghash_mul(y, H);
+	}
+	for (size_t i = 0; i < ciphertext_len; i += 16) {
+		xor_block(y, y, ciphertext + i);
+		ghash_mul(y, H);
+	}
+	a_bits = (uint64_t)aad_len * 8;
+	c_bits = (uint64_t)ciphertext_len * 8;
+	for (int i = 0; i < 8; ++i) {
+		lenblock[i] = (uint8_t)(a_bits >> (56 - 8 * i));
+		lenblock[8 + i] = (uint8_t)(c_bits >> (56 - 8 * i));
+	}
+	xor_block(y, y, lenblock);
+	ghash_mul(y, H);
+	memcpy(out, y, 16);
+	return 0;
+}
+
+/* GHASH mask: A is empty, C is the 48-byte context, so the hashed string is
+ * context ‖ 0^64 ‖ [384]_64 — the u = v = 0 case of SP 800-38D §7.1.
+ * H = first 16 bytes of hash_key, independent of the AES data key. */
+static int kh_ghash(fde_worker *worker, const uint8_t *input,
+					size_t input_len, uint8_t out[16]) {
+	return fde_ghash(worker->keys.hash_key, NULL, 0, input, input_len, out);
 }
 
 /* SipHash-2-4 with 128-bit output via EVP_MAC "SIPHASH" (OpenSSL 3.x).
@@ -417,6 +563,10 @@ static fde_xex_hash_fn xex_hash_for_scheme(fde_scheme scheme) {
 	case FDE_RATCHET_XEX_BLAKE3:  return kh_blake3;
 	case FDE_RATCHET_XEX_SIPHASH: return kh_siphash128;
 	case FDE_RATCHET_XEX_KMAC:    return kh_kmac128;
+	case FDE_RATCHET_XEX_BLAKE2S: return kh_blake2s;
+	case FDE_RATCHET_XEX_HMAC_SHA256: return kh_hmac_sha256;
+	case FDE_RATCHET_XEX_CMAC:    return kh_cmac;
+	case FDE_RATCHET_XEX_GHASH:   return kh_ghash;
 	default:                      return NULL;
 	}
 }
@@ -624,7 +774,8 @@ static int ratchet_xex_crypt(fde_worker *worker, fde_scheme scheme,
 								  const uint32_t *indices, uint64_t sector,
 								  size_t blocks, uint8_t *output,
 								  fde_profile *profile) {
-    EVP_CIPHER_CTX *ctx = encrypt ? worker->ecb_enc : worker->ecb_dec;
+    EVP_CIPHER_CTX *ctx = encrypt ? worker->xts_data_enc
+								  : worker->xts_data_dec;
 	fde_xex_hash_fn hash_fn = xex_hash_for_scheme(scheme);
 	uint8_t state[16] = {0};
 	uint8_t sector_bytes[16];
@@ -696,6 +847,10 @@ int fde_encrypt(fde_worker *worker, fde_scheme scheme,
 	case FDE_RATCHET_XEX_BLAKE3:
 	case FDE_RATCHET_XEX_SIPHASH:
 	case FDE_RATCHET_XEX_KMAC:
+	case FDE_RATCHET_XEX_BLAKE2S:
+	case FDE_RATCHET_XEX_HMAC_SHA256:
+	case FDE_RATCHET_XEX_CMAC:
+	case FDE_RATCHET_XEX_GHASH:
 		return ratchet_xex_crypt(worker, scheme, 1, plaintext, indices,
 									  sector, blocks, ciphertext, profile);
     default:
@@ -730,6 +885,10 @@ int fde_decrypt(fde_worker *worker, fde_scheme scheme,
 	case FDE_RATCHET_XEX_BLAKE3:
 	case FDE_RATCHET_XEX_SIPHASH:
 	case FDE_RATCHET_XEX_KMAC:
+	case FDE_RATCHET_XEX_BLAKE2S:
+	case FDE_RATCHET_XEX_HMAC_SHA256:
+	case FDE_RATCHET_XEX_CMAC:
+	case FDE_RATCHET_XEX_GHASH:
 		return ratchet_xex_crypt(worker, scheme, 0, ciphertext, indices,
 									  sector, blocks, plaintext, profile);
     default:
@@ -919,7 +1078,8 @@ int fde_decrypt_target(fde_worker *worker, fde_scheme scheme,
 		uint8_t xor_source[16];
 		uint8_t xor_destination[16];
 		xor_block(xor_source, ciphertext + 16 * target, tweak);
-		if (fixed_block(worker->ecb_dec, 0, xor_source, xor_destination) != 0) {
+		if (fixed_block(worker->xts_data_dec, 0, xor_source,
+						xor_destination) != 0) {
 			return -1;
 		}
 		xor_block(plaintext, xor_destination, tweak);

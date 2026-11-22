@@ -24,7 +24,11 @@ typedef enum {
     FDE_RATCHET_XEX_BLAKE3 = 8,
     FDE_RATCHET_XEX_SIPHASH = 9,
     FDE_RATCHET_XEX_KMAC = 10,
-    FDE_SCHEME_COUNT = 11
+    FDE_RATCHET_XEX_BLAKE2S = 11,
+    FDE_RATCHET_XEX_HMAC_SHA256 = 12,
+    FDE_RATCHET_XEX_CMAC = 13,
+    FDE_RATCHET_XEX_GHASH = 14,
+    FDE_SCHEME_COUNT = 15
 } fde_scheme;
 
 typedef struct {
@@ -116,6 +120,14 @@ int fde_ratchet_xex_keyed_update(fde_worker *worker, uint8_t tweak[16],
                                  const uint8_t index[16],
                                  const uint8_t state[16],
                                  fde_xex_hash_fn hash_fn);
+
+/* GHASH in GCM input format (SP 800-38D §7.1): hashes
+ * aad ‖ ciphertext ‖ [len(aad)]64 ‖ [len(ciphertext)]64 with bit lengths
+ * encoded big-endian. Exposed for the GCM cross-check in test_fde; the XEX
+ * mask uses aad = NULL and the 48-byte context as ciphertext. */
+int fde_ghash(const uint8_t H[16], const uint8_t *aad, size_t aad_len,
+              const uint8_t *ciphertext, size_t ciphertext_len,
+              uint8_t out[16]);
 
 /* Exposed only for independent XTS correctness tests. */
 void fde_xts_mul_alpha(uint8_t tweak[16]);
