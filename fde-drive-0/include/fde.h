@@ -12,6 +12,14 @@ extern "C" {
 #define FDE_MASTER_KEY_BYTES 32u
 #define FDE_BLAKE3_STATE_BYTES 32u
 
+#define FDE_XEX_HMAC_INSTANCES(X) \
+    X(SHA256,   "xex-hmac-sha256",   "Ratchet-XEX-HMAC-SHA256",   "SHA2-256") \
+    X(SHA3_256, "xex-hmac-sha3-256", "Ratchet-XEX-HMAC-SHA3-256", "SHA3-256") \
+    X(SHA2_224, "xex-hmac-sha2-224", "Ratchet-XEX-HMAC-SHA2-224", "SHA2-224") \
+    X(SHA3_224, "xex-hmac-sha3-224", "Ratchet-XEX-HMAC-SHA3-224", "SHA3-224") \
+    X(BLAKE2S_256, "xex-hmac-blake2s-256", "Ratchet-XEX-HMAC-BLAKE2S-256", "BLAKE2S-256") \
+    X(SM3, "xex-hmac-sm3", "Ratchet-XEX-HMAC-SM3", "SM3")
+
 typedef enum {
     FDE_ECB = 0,
     FDE_XTS = 1,
@@ -25,11 +33,21 @@ typedef enum {
     FDE_RATCHET_XEX_SIPHASH = 9,
     FDE_RATCHET_XEX_KMAC = 10,
     FDE_RATCHET_XEX_BLAKE2S = 11,
-    FDE_RATCHET_XEX_HMAC_SHA256 = 12,
-    FDE_RATCHET_XEX_CMAC = 13,
-    FDE_RATCHET_XEX_GHASH = 14,
-    FDE_SCHEME_COUNT = 15
+    FDE_RATCHET_XEX_CMAC = 12,
+    FDE_RATCHET_XEX_GHASH = 13,
+#define FDE_XEX_HMAC_SCHEME_ENUM(ID, NAME, DISPLAY, DIGEST) \
+    FDE_RATCHET_XEX_HMAC_##ID,
+    FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_SCHEME_ENUM)
+#undef FDE_XEX_HMAC_SCHEME_ENUM
+    FDE_SCHEME_COUNT
 } fde_scheme;
+
+enum {
+#define FDE_XEX_HMAC_INDEX(ID, NAME, DISPLAY, DIGEST) FDE_XEX_HMAC_IDX_##ID,
+    FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_INDEX)
+#undef FDE_XEX_HMAC_INDEX
+    FDE_XEX_HMAC_COUNT
+};
 
 typedef struct {
     uint8_t ecb_key[FDE_MASTER_KEY_BYTES];

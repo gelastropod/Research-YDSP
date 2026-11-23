@@ -7,6 +7,7 @@
 #include <openssl/core_names.h>
 #include <openssl/params.h>
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -25,7 +26,7 @@ struct fde_worker {
 	EVP_MAC_CTX *xex_b2b_ctx;
 	EVP_MAC_CTX *xex_sip_ctx;
 	EVP_MAC_CTX *xex_b2s_ctx;
-	EVP_MAC_CTX *xex_hmac_ctx;
+	EVP_MAC_CTX *xex_hmac_ctx[FDE_XEX_HMAC_COUNT];
 	EVP_MAC_CTX *xex_cmac_ctx;
     EVP_CIPHER_CTX *ecb_enc;
     EVP_CIPHER_CTX *ecb_dec;
@@ -149,9 +150,11 @@ const char *fde_scheme_name(fde_scheme scheme) {
         "Ratchet-XEX-SIPHASH",
         "Ratchet-XEX-KMAC",
         "Ratchet-XEX-BLAKE2S",
-        "Ratchet-XEX-HMAC-SHA256",
         "Ratchet-XEX-CMAC",
-        "Ratchet-XEX-GHASH"
+        "Ratchet-XEX-GHASH",
+#define FDE_XEX_HMAC_SCHEME_NAME(ID, NAME, DISPLAY, DIGEST) DISPLAY,
+        FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_SCHEME_NAME)
+#undef FDE_XEX_HMAC_SCHEME_NAME
     };
     return (scheme >= 0 && scheme < FDE_SCHEME_COUNT) ? names[scheme]
                                                        : "unknown";
@@ -179,6 +182,38 @@ void fde_default_keys(fde_keys *keys) {
         keys->ratchet_k0[i] = (uint8_t)(0x90u + i);
         keys->ratchet_kg[i] = (uint8_t)(0xc0u + i);
     }
+}
+
+static int configure_xex_hmac(fde_worker *worker) {
+    worker->xex_hmac = EVP_MAC_fetch(NULL, "HMAC", NULL);
+    if (worker->xex_hmac == NULL) {
+        return -1;
+    }
+#define FDE_XEX_HMAC_CONFIGURE(ID, NAME, DISPLAY, DIGEST) \
+    do { \
+        OSSL_PARAM params[] = { \
+            OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_DIGEST, \
+                                             (char *)(DIGEST), 0), \
+            OSSL_PARAM_construct_end() \
+        }; \
+        worker->xex_hmac_ctx[FDE_XEX_HMAC_IDX_##ID] = \
+            EVP_MAC_CTX_new(worker->xex_hmac); \
+        if (worker->xex_hmac_ctx[FDE_XEX_HMAC_IDX_##ID] == NULL || \
+            EVP_MAC_CTX_set_params( \
+                worker->xex_hmac_ctx[FDE_XEX_HMAC_IDX_##ID], params) != 1 || \
+            EVP_MAC_init(worker->xex_hmac_ctx[FDE_XEX_HMAC_IDX_##ID], \
+                         worker->keys.hash_key, FDE_MASTER_KEY_BYTES, params) \
+                != 1 || \
+            EVP_MAC_CTX_get_mac_size( \
+                worker->xex_hmac_ctx[FDE_XEX_HMAC_IDX_##ID]) < 16) { \
+            fprintf(stderr, "failed to configure XEX-HMAC digest %s\n", \
+                    (DIGEST)); \
+            return -1; \
+        } \
+    } while (0);
+    FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_CONFIGURE)
+#undef FDE_XEX_HMAC_CONFIGURE
+    return 0;
 }
 
 fde_worker *fde_worker_new(const fde_keys *keys) {
@@ -210,12 +245,13 @@ fde_worker *fde_worker_new(const fde_keys *keys) {
 	worker->xex_b2s = EVP_MAC_fetch(NULL, "BLAKE2SMAC", NULL);
 	worker->xex_b2s_ctx = worker->xex_b2s == NULL ? NULL
 						 : EVP_MAC_CTX_new(worker->xex_b2s);
-	worker->xex_hmac = EVP_MAC_fetch(NULL, "HMAC", NULL);
-	worker->xex_hmac_ctx = worker->xex_hmac == NULL ? NULL
-						  : EVP_MAC_CTX_new(worker->xex_hmac);
 	worker->xex_cmac = EVP_MAC_fetch(NULL, "CMAC", NULL);
 	worker->xex_cmac_ctx = worker->xex_cmac == NULL ? NULL
 						  : EVP_MAC_CTX_new(worker->xex_cmac);
+    if (configure_xex_hmac(worker) != 0) {
+        fde_worker_free(worker);
+        return NULL;
+    }
     worker->ecb_enc = new_cipher_ctx(EVP_aes_256_ecb(), keys->ecb_key, 1);
     worker->ecb_dec = new_cipher_ctx(EVP_aes_256_ecb(), keys->ecb_key, 0);
     worker->xts_data_enc = new_cipher_ctx(EVP_aes_256_ecb(), keys->xts_k1, 1);
@@ -232,8 +268,7 @@ fde_worker *fde_worker_new(const fde_keys *keys) {
 
     if (worker->xex_md == NULL || worker->xex_kmac_ctx == NULL ||
 		worker->xex_b2b_ctx == NULL || worker->xex_sip_ctx == NULL ||
-		worker->xex_b2s_ctx == NULL || worker->xex_hmac_ctx == NULL ||
-		worker->xex_cmac_ctx == NULL ||
+		worker->xex_b2s_ctx == NULL || worker->xex_cmac_ctx == NULL ||
 		worker->ecb_enc == NULL || worker->ecb_dec == NULL ||
         worker->xts_data_enc == NULL || worker->xts_data_dec == NULL ||
         worker->xts_tweak_enc == NULL || worker->seed_enc == NULL ||
@@ -256,7 +291,10 @@ void fde_worker_free(fde_worker *worker) {
 	EVP_MAC_CTX_free(worker->xex_b2b_ctx);
 	EVP_MAC_CTX_free(worker->xex_sip_ctx);
 	EVP_MAC_CTX_free(worker->xex_b2s_ctx);
-	EVP_MAC_CTX_free(worker->xex_hmac_ctx);
+#define FDE_XEX_HMAC_FREE(ID, NAME, DISPLAY, DIGEST) \
+    EVP_MAC_CTX_free(worker->xex_hmac_ctx[FDE_XEX_HMAC_IDX_##ID]);
+    FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_FREE)
+#undef FDE_XEX_HMAC_FREE
 	EVP_MAC_CTX_free(worker->xex_cmac_ctx);
 	EVP_MAC_free(worker->xex_kmac);
 	EVP_MAC_free(worker->xex_b2b);
@@ -436,25 +474,34 @@ static int kh_blake2s(fde_worker *worker, const uint8_t *input,
 	return 0;
 }
 
-/* HMAC-SHA-256 truncated to the leftmost 128 bits (FIPS 198-1 §5). */
-static int kh_hmac_sha256(fde_worker *worker, const uint8_t *input,
-						  size_t input_len, uint8_t out[16]) {
-	uint8_t full[32];
-	size_t out_len = 0;
-	OSSL_PARAM params[] = {
-		OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_DIGEST,
-										 (char *)"SHA256", 0),
-		OSSL_PARAM_construct_end()
-	};
-	if (EVP_MAC_init(worker->xex_hmac_ctx, worker->keys.hash_key,
-					 FDE_MASTER_KEY_BYTES, params) != 1 ||
-		EVP_MAC_update(worker->xex_hmac_ctx, input, input_len) != 1 ||
-		EVP_MAC_final(worker->xex_hmac_ctx, full, &out_len, sizeof(full)) != 1) {
-		return -1;
-	}
-	memcpy(out, full, 16);
-	return 0;
+static int kh_hmac(fde_worker *worker, size_t idx, const uint8_t *input,
+                   size_t input_len, uint8_t out[16]) {
+    uint8_t full[EVP_MAX_MD_SIZE];
+    size_t out_len = 0;
+    EVP_MAC_CTX *ctx;
+    if (worker == NULL || idx >= FDE_XEX_HMAC_COUNT || input == NULL ||
+        out == NULL) {
+        return -1;
+    }
+    ctx = worker->xex_hmac_ctx[idx];
+    if (EVP_MAC_init(ctx, worker->keys.hash_key, FDE_MASTER_KEY_BYTES, NULL) !=
+            1 ||
+        EVP_MAC_update(ctx, input, input_len) != 1 ||
+        EVP_MAC_final(ctx, full, &out_len, sizeof(full)) != 1 ||
+        out_len < 16) {
+        return -1;
+    }
+    memcpy(out, full, 16);
+    return 0;
 }
+
+#define FDE_XEX_HMAC_WRAPPER(ID, NAME, DISPLAY, DIGEST) \
+    static int kh_hmac_##ID(fde_worker *worker, const uint8_t *input, \
+                            size_t input_len, uint8_t out[16]) { \
+        return kh_hmac(worker, FDE_XEX_HMAC_IDX_##ID, input, input_len, out); \
+    }
+FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_WRAPPER)
+#undef FDE_XEX_HMAC_WRAPPER
 
 /* AES-256-CMAC (NIST SP 800-38B). The 48-byte input is exactly three
  * blocks, so no CMAC padding is involved. */
@@ -564,7 +611,10 @@ static fde_xex_hash_fn xex_hash_for_scheme(fde_scheme scheme) {
 	case FDE_RATCHET_XEX_SIPHASH: return kh_siphash128;
 	case FDE_RATCHET_XEX_KMAC:    return kh_kmac128;
 	case FDE_RATCHET_XEX_BLAKE2S: return kh_blake2s;
-	case FDE_RATCHET_XEX_HMAC_SHA256: return kh_hmac_sha256;
+#define FDE_XEX_HMAC_HASH_CASE(ID, NAME, DISPLAY, DIGEST) \
+    case FDE_RATCHET_XEX_HMAC_##ID: return kh_hmac_##ID;
+        FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_HASH_CASE)
+#undef FDE_XEX_HMAC_HASH_CASE
 	case FDE_RATCHET_XEX_CMAC:    return kh_cmac;
 	case FDE_RATCHET_XEX_GHASH:   return kh_ghash;
 	default:                      return NULL;
@@ -848,7 +898,10 @@ int fde_encrypt(fde_worker *worker, fde_scheme scheme,
 	case FDE_RATCHET_XEX_SIPHASH:
 	case FDE_RATCHET_XEX_KMAC:
 	case FDE_RATCHET_XEX_BLAKE2S:
-	case FDE_RATCHET_XEX_HMAC_SHA256:
+#define FDE_XEX_HMAC_SWITCH_CASE(ID, NAME, DISPLAY, DIGEST) \
+    case FDE_RATCHET_XEX_HMAC_##ID:
+        FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_SWITCH_CASE)
+#undef FDE_XEX_HMAC_SWITCH_CASE
 	case FDE_RATCHET_XEX_CMAC:
 	case FDE_RATCHET_XEX_GHASH:
 		return ratchet_xex_crypt(worker, scheme, 1, plaintext, indices,
@@ -886,7 +939,10 @@ int fde_decrypt(fde_worker *worker, fde_scheme scheme,
 	case FDE_RATCHET_XEX_SIPHASH:
 	case FDE_RATCHET_XEX_KMAC:
 	case FDE_RATCHET_XEX_BLAKE2S:
-	case FDE_RATCHET_XEX_HMAC_SHA256:
+#define FDE_XEX_HMAC_SWITCH_CASE(ID, NAME, DISPLAY, DIGEST) \
+    case FDE_RATCHET_XEX_HMAC_##ID:
+        FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_SWITCH_CASE)
+#undef FDE_XEX_HMAC_SWITCH_CASE
 	case FDE_RATCHET_XEX_CMAC:
 	case FDE_RATCHET_XEX_GHASH:
 		return ratchet_xex_crypt(worker, scheme, 0, ciphertext, indices,
