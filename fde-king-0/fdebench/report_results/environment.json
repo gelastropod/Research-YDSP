@@ -1,0 +1,40 @@
+{
+  "python": "3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0]",
+  "platform": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.43",
+  "cpu_model": "13th Gen Intel(R) Core(TM) i7-1365U",
+  "logical_cpus": 12,
+  "affinity_cpus": 12,
+  "aes_ni_available": true,
+  "clmul_available": true,
+  "openssl": "OpenSSL 4.0.1 9 Jun 2026",
+  "packages": {
+    "cryptography": "50.0.0",
+    "pycryptodome": "4.5.0",
+    "blake3": "1.0.11",
+    "PyNaCl": "1.6.2",
+    "matplotlib": "3.10.8",
+    "numpy": "2.3.5",
+    "pandas": "2.2.3"
+  },
+  "config": {
+    "preset": "report",
+    "disk_bytes": 67108864,
+    "work_bytes": 1048576,
+    "repeats": 10,
+    "component_rounds": 500,
+    "hash_calls": 100000,
+    "max_workers": 12,
+    "thread_bytes": 262144,
+    "thread_repeats": 3,
+    "within_sectors": 8,
+    "read_samples": 200
+  },
+  "clock": "time.perf_counter_ns",
+  "cycle_counter": "not measured",
+  "key_fixture": "public deterministic benchmark keys; not production secrets",
+  "execution": "CPU only; no GPU/CUDA code",
+  "gil_enabled": true,
+  "timer_resolution_ns": 1.0,
+  "cpu_quota": "max 100000",
+  "power_clock_policy": "not controlled; shared-host scheduling/turbo can vary"
+}

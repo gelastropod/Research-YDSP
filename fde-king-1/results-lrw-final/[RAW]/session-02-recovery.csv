@@ -1,0 +1,7 @@
+session,scheme,tampered_block,damaged_blocks,detected
+2,lrw_horner,1,1;2,False
+2,lrw_horner,32,32;33,False
+2,lrw_horner,256,256,False
+2,lrw_precompute,1,1;2,False
+2,lrw_precompute,32,32;33,False
+2,lrw_precompute,256,256,False

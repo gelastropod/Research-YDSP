@@ -1,0 +1,44 @@
+{
+  "preset": "report",
+  "rqs": [
+    2
+  ],
+  "schemes": [
+    "ecb_bulk",
+    "xts_library",
+    "xts_manual_ni",
+    "xex_blake2s",
+    "cbc_mac",
+    "lrw_horner",
+    "lrw_precompute"
+  ],
+  "sessions": 6,
+  "work_mib": [
+    1.0,
+    4.0
+  ],
+  "sector_sizes": [
+    512,
+    4096
+  ],
+  "workers": [
+    1,
+    2,
+    4
+  ],
+  "thread_kib": [
+    256
+  ],
+  "repeats": 5,
+  "thread_repeats": 5,
+  "profile_rounds": 500,
+  "hash_calls": 10000,
+  "read_samples": 200,
+  "optimization_repeats": 10,
+  "optimization_rounds": 50,
+  "setup_repeats": 20,
+  "within_sectors": 8,
+  "bootstrap": 10000,
+  "seed": 20261119,
+  "disk_bytes": 67108864
+}

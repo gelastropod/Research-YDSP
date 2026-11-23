@@ -1,0 +1,17 @@
+scheme,direction,component,median,ci_low,ci_high,sessions,samples,ci_scope,ci_replicates,coverage_lower_bound,ci_reliable
+lrw_horner,decrypt,data_ns,13743.5,12464.5,14313.5,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_horner,decrypt,mask_ns,780044.5,708800.0,804393.0,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_horner,decrypt,other_ns,1338.0,1185.0,1402.5,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_horner,decrypt,seed_ns,683.75,594.0,737.0,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_horner,encrypt,data_ns,942776.5,858321.0,994710.5,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_horner,encrypt,mask_ns,802610.5,721546.5,833225.0,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_horner,encrypt,other_ns,79601.25,77831.5,80901.5,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_horner,encrypt,seed_ns,663.75,568.5,710.0,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_precompute,decrypt,data_ns,13435.25,12247.0,13988.5,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_precompute,decrypt,mask_ns,633180.25,567673.0,657276.5,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_precompute,decrypt,other_ns,1419.25,1306.0,1477.0,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_precompute,decrypt,seed_ns,4249.75,3866.0,4488.5,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_precompute,encrypt,data_ns,938069.5,848946.5,967389.0,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_precompute,encrypt,mask_ns,642160.0,588680.5,690188.0,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_precompute,encrypt,other_ns,76052.0,74140.0,76839.0,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches
+lrw_precompute,encrypt,seed_ns,4219.75,3799.5,4423.5,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches

@@ -1,0 +1,17 @@
+scheme,direction,component,median,ci_low,ci_high,sessions,samples,ci_scope,ci_replicates,coverage_lower_bound,ci_reliable,measured_separately
+lrw_horner,decrypt,data_ns,1.6665884582384785,1.6384953537331195,1.6773813739522012,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_horner,decrypt,mask_ns,98.08985034223258,98.06411830117166,98.10899435108797,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_horner,decrypt,other_ns,0.160916111835135,0.1583794897164834,0.1636962568620995,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_horner,decrypt,seed_ns,0.08378416365596153,0.07838696730063113,0.08665594260224566,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_horner,encrypt,data_ns,51.566054064412924,50.59875630779045,51.870901457425845,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_horner,encrypt,mask_ns,43.30239007912083,42.92783985612678,44.54843988986513,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_horner,encrypt,other_ns,4.395659638698989,4.223778639385374,4.720563981753784,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_horner,encrypt,seed_ns,0.0345391138805222,0.032565617247390766,0.035884674933766625,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_precompute,decrypt,data_ns,1.993539611083681,1.9826593592344803,2.027239608177319,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_precompute,decrypt,mask_ns,97.11535409922843,97.06254528386856,97.14506839178077,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_precompute,decrypt,other_ns,0.21194910040514994,0.2086034129098912,0.2161233085271283,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_precompute,decrypt,seed_ns,0.6296151331599866,0.625934469004291,0.6435070883297955,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_precompute,encrypt,data_ns,55.59465646093304,55.36922256820799,56.002891901045786,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_precompute,encrypt,mask_ns,38.68521111227608,38.26312116674319,39.136065454238626,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_precompute,encrypt,other_ns,4.616220786485765,4.418612028221633,4.938802002566568,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
+lrw_precompute,encrypt,seed_ns,0.2416850832438398,0.23209576823534095,0.24432281712340506,6,3000,between_launch_order_statistics,6,0.96875,requires_iid_launches,True
