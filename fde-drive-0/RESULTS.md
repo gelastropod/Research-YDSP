@@ -141,3 +141,20 @@ Reference rows (not XEX candidates):
 - `drive_throughput.csv` and `throughput_plot.png` are unchanged from earlier uploads (dated 2026-11-17).
 - In `schemes_throughput.png`, 15 schemes share the 10-colour palette, so colours repeat (for example cbc-aes, xex-hmac-sha256 and xts are all blue), and both legends cover the plots.
 - The drive CSV header still has shifted names (`data_n,sevolution_ns`).
+
+## Summary
+| Mask hash | ns / update | 1 GiB drive MB/s (vs XTS) | 8-thread speedup | AXU |
+|---|---|---|---|---|
+| BLAKE2s | 253 | 36.2 (0.42x) | 6.13x | Assumed |
+| HMAC-SHA256 | 478 | 24.4 (0.28x) | 1.80x | Assumed |
+| CMAC | 545 | 21.8 (0.25x) | 2.01x | Assumed |
+| KMAC128 | 802 | 16.0 (0.19x) | 5.85x | Assumed |
+| GHASH (bitwise reference) | 4,282 | 3.5 (0.04x) | 6.04x | Proven, ε ≤ 3/2^128 |
+
+**Conclusion.** We choose BLAKE2s because it is the fastest of the five candidates:
+
+- 1.9x faster per mask update than the next candidate, HMAC-SHA256;
+- the highest drive throughput (36.2 MB/s);
+- near-linear scaling to 8 threads (6.1x), whereas HMAC-SHA256 and CMAC stop at about 2x.
+
+It also takes a key and outputs a 16-byte mask natively, so no truncation or wrapper construction is needed. GHASH has a proven AXU bound, but our reference implementation is about 17x slower than BLAKE2s, so it is not competitive as implemented.
