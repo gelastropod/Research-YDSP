@@ -18,7 +18,8 @@ extern "C" {
     X(SHA2_224, "xex-hmac-sha2-224", "Ratchet-XEX-HMAC-SHA2-224", "SHA2-224") \
     X(SHA3_224, "xex-hmac-sha3-224", "Ratchet-XEX-HMAC-SHA3-224", "SHA3-224") \
     X(BLAKE2S_256, "xex-hmac-blake2s-256", "Ratchet-XEX-HMAC-BLAKE2S-256", "BLAKE2S-256") \
-    X(SM3, "xex-hmac-sm3", "Ratchet-XEX-HMAC-SM3", "SM3")
+    X(SM3, "xex-hmac-sm3", "Ratchet-XEX-HMAC-SM3", "SM3") \
+    X(RIPEMD160, "xex-hmac-ripemd160", "Ratchet-XEX-HMAC-RIPEMD160", "RIPEMD-160")
 
 typedef enum {
     FDE_ECB = 0,
@@ -127,6 +128,8 @@ void fde_ratchet_blake3_update(uint8_t state[32],
 typedef int (*fde_xex_hash_fn)(fde_worker *worker, const uint8_t *input,
                                size_t input_len, uint8_t out[16]);
 
+/* Map an XEX scheme to its mask hash; NULL for non-XEX schemes. Exposed so
+ * tests and benchmarks can time mask functions in isolation. */
 fde_xex_hash_fn fde_xex_hash_for_scheme(fde_scheme scheme);
 
 int fde_ratchet_xex_unkeyed_update(fde_worker *worker, uint8_t tweak[16],
