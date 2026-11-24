@@ -1,7 +1,9 @@
 #include "fde.h"
 #include "blake3.h"
 
+#include <openssl/core_names.h>
 #include <openssl/evp.h>
+#include <openssl/params.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -169,6 +171,51 @@ static void test_target_recovery(fde_worker *worker) {
     }
 }
 
+static void test_xex_hmac_masks(fde_worker *worker) {
+    static const struct {
+        fde_scheme scheme;
+        const char *digest;
+    } instances[] = {
+#define FDE_XEX_HMAC_TEST_INSTANCE(ID, NAME, DISPLAY, DIGEST) \
+        {FDE_RATCHET_XEX_HMAC_##ID, DIGEST},
+        FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_TEST_INSTANCE)
+#undef FDE_XEX_HMAC_TEST_INSTANCE
+    };
+    fde_keys keys;
+    uint8_t input[48], actual[16], expected[EVP_MAX_MD_SIZE];
+    size_t expected_len = 0;
+    for (size_t i = 0; i < sizeof(input); ++i) {
+        input[i] = (uint8_t)(i * 7u + 3u);
+    }
+    fde_default_keys(&keys);
+    EVP_MAC *mac = EVP_MAC_fetch(NULL, "HMAC", NULL);
+    for (size_t i = 0; i < sizeof(instances) / sizeof(instances[0]); ++i) {
+        EVP_MAC_CTX *ctx = mac == NULL ? NULL : EVP_MAC_CTX_new(mac);
+        OSSL_PARAM params[] = {
+            OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_DIGEST,
+                                             (char *)instances[i].digest, 0),
+            OSSL_PARAM_construct_end()
+        };
+        fde_xex_hash_fn hash_fn = fde_xex_hash_for_scheme(instances[i].scheme);
+        int ok = ctx != NULL && hash_fn != NULL &&
+                 EVP_MAC_CTX_set_params(ctx, params) == 1 &&
+                 EVP_MAC_init(ctx, keys.hash_key, FDE_MASTER_KEY_BYTES, params) ==
+                     1 &&
+                 EVP_MAC_update(ctx, input, sizeof(input)) == 1 &&
+                 EVP_MAC_final(ctx, expected, &expected_len,
+                               sizeof(expected)) == 1 &&
+                 expected_len >= 16 &&
+                 hash_fn(worker, input, sizeof(input), actual) == 0 &&
+                 memcmp(actual, expected, 16) == 0;
+        char message[160];
+        snprintf(message, sizeof(message), "%s emits the leftmost 16 HMAC bytes",
+                 fde_scheme_name(instances[i].scheme));
+        CHECK(ok, message);
+        EVP_MAC_CTX_free(ctx);
+    }
+    EVP_MAC_free(mac);
+}
+
 /*
  * GHASH has no public OpenSSL API, so the only sanity check is a
  * cross-validation against AES-256-GCM: for a 96-bit IV the GCM tag is
@@ -239,6 +286,7 @@ int main(void) {
     test_xts_paths(worker);
     test_index_semantics(worker);
     test_target_recovery(worker);
+    test_xex_hmac_masks(worker);
     test_ghash_against_gcm();
 
     fde_worker_free(worker);

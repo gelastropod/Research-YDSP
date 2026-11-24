@@ -42,13 +42,17 @@ typedef enum {
     BENCH_XEX_SIPHASH,
     BENCH_XEX_KMAC,
     BENCH_XEX_BLAKE2S,
-    BENCH_XEX_HMAC_SHA256,
+#define FDE_XEX_HMAC_BENCH_ENUM(ID, NAME, DISPLAY, DIGEST) BENCH_XEX_HMAC_##ID,
+    FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_BENCH_ENUM)
+#undef FDE_XEX_HMAC_BENCH_ENUM
     BENCH_XEX_CMAC,
     BENCH_XEX_GHASH,
     BENCH_IMPL_COUNT
 } bench_impl;
 
 static volatile uint8_t benchmark_sink = 0;
+
+static fde_scheme implementation_scheme(bench_impl implementation);
 
 static uint64_t now_ns(void) {
     struct timespec ts;
@@ -125,7 +129,9 @@ static const char *bench_name(bench_impl implementation) {
         "Ratchet-XEX-SIPHASH",
         "Ratchet-XEX-KMAC",
         "Ratchet-XEX-BLAKE2S",
-        "Ratchet-XEX-HMAC-SHA256",
+#define FDE_XEX_HMAC_BENCH_NAME(ID, NAME, DISPLAY, DIGEST) DISPLAY,
+        FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_BENCH_NAME)
+#undef FDE_XEX_HMAC_BENCH_NAME
         "Ratchet-XEX-CMAC",
         "Ratchet-XEX-GHASH"
     };
@@ -161,8 +167,10 @@ static fde_scheme implementation_scheme(bench_impl implementation) {
         return FDE_RATCHET_XEX_KMAC;
     case BENCH_XEX_BLAKE2S:
         return FDE_RATCHET_XEX_BLAKE2S;
-    case BENCH_XEX_HMAC_SHA256:
-        return FDE_RATCHET_XEX_HMAC_SHA256;
+#define FDE_XEX_HMAC_BENCH_SCHEME(ID, NAME, DISPLAY, DIGEST) \
+    case BENCH_XEX_HMAC_##ID: return FDE_RATCHET_XEX_HMAC_##ID;
+        FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_BENCH_SCHEME)
+#undef FDE_XEX_HMAC_BENCH_SCHEME
     case BENCH_XEX_CMAC:
         return FDE_RATCHET_XEX_CMAC;
     case BENCH_XEX_GHASH:
@@ -538,6 +546,10 @@ static int benchmark_ratchet_primitives(const char *directory,
         {FDE_RATCHET_XEX_BLAKE3, "XEX-BLAKE3-keyed(SconcatIconcatC)"},
         {FDE_RATCHET_XEX_SIPHASH, "XEX-SipHash128(SconcatIconcatC)"},
         {FDE_RATCHET_XEX_KMAC, "XEX-KMAC128(SconcatIconcatC)"},
+#define FDE_XEX_HMAC_PRIMITIVE(ID, NAME, DISPLAY, DIGEST) \
+        {FDE_RATCHET_XEX_HMAC_##ID, DISPLAY},
+        FDE_XEX_HMAC_INSTANCES(FDE_XEX_HMAC_PRIMITIVE)
+#undef FDE_XEX_HMAC_PRIMITIVE
     };
     for (size_t h = 0; h < sizeof(xex_hashes) / sizeof(xex_hashes[0]); ++h) {
         fde_xex_hash_fn hash_fn = fde_xex_hash_for_scheme(xex_hashes[h].scheme);

@@ -5,6 +5,14 @@ detail — what every helper function does, what the return codes mean — and
 walks through adding a new scheme end to end, using a chained XEX
 construction as the worked example. All paths are relative to `fde-drive-0/`.
 
+## Adding an XEX-HMAC instance
+
+Add one `X(ID, "xex-hmac-name", "Ratchet-XEX-HMAC-name", "OpenSSL digest name")`
+line to `FDE_XEX_HMAC_INSTANCES` in `include/fde.h`; the third field is its
+display name.
+The digest name must be accepted by `EVP_MD_fetch`, produce at least 16 bytes,
+and not be an XOF.
+
 ---
 
 ## 1. Return-code and error conventions
