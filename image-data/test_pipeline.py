@@ -37,19 +37,20 @@ def test_padding(tmp):
     Image.new("RGB", (8, 8)).save(source, format="BMP")
     run("encode", source, binary, error="expected a PNG")
     white, transparent = (255, 255, 255, 255), (0, 0, 0, 0)
-    for size, options, canvas_size, box, border in (
-        ((13, 8), (), (16, 8), (1, 0, 14, 8), white),
-        ((6, 32), ("--fit", "long"), (8, 32), (1, 0, 7, 32), white),
-        ((9, 24), ("--fit", "long", "-s", "16"), (8, 16), (1, 0, 7, 16), white),
-        ((9, 24), ("--fit", "long", "--transparent", "-s", "16"), (8, 16), (1, 0, 7, 16), transparent),
-        ((2, 8), (), (4, 16), (0, 0, 4, 16), white),
+    flattened = tuple(255 - ((255 - c) * color[3] + 127) // 255 for c in color[:3]) + (255,)
+    for size, options, canvas_size, box, border, fill in (
+        ((13, 8), (), (16, 8), (1, 0, 14, 8), white, flattened),
+        ((6, 32), ("--fit", "long"), (8, 32), (1, 0, 7, 32), white, flattened),
+        ((9, 24), ("--fit", "long", "-s", "16"), (8, 16), (1, 0, 7, 16), white, flattened),
+        ((9, 24), ("--fit", "long", "--transparent", "-s", "16"), (8, 16), (1, 0, 7, 16), transparent, color),
+        ((2, 8), (), (4, 16), (0, 0, 4, 16), white, flattened),
     ):
         Image.new("RGBA", size, color).save(source)
         run("pad_image", *options, source, padded)
         actual_size, pixels = read_png(padded)
         assert actual_size == canvas_size
         expected = Image.new("RGBA", canvas_size, border)
-        expected.paste(color, box)
+        expected.paste(fill, box)
         for actual, wanted in zip(pixels, rgba_pixels(expected)):
             if wanted == border:
                 assert actual == wanted
@@ -57,7 +58,7 @@ def test_padding(tmp):
                 assert max(abs(a - b) for a, b in zip(actual, wanted)) <= 1
         run("encode", padded, binary)
     run("pad_image", "-s", "6", source, padded, error="power of two")
-    print("Padding: both fit modes, centered white and transparent borders, minimum edge, and encoder validation")
+    print("Padding: both fit modes, alpha flattening, centered white and transparent borders, minimum edge, and encoder validation")
 
 
 def test_rgba(tmp):
@@ -75,13 +76,11 @@ def test_rgba(tmp):
         raw = payload.read_bytes()
         assert len(raw) == width * height * 4
         points = [tuple(raw[i:i + 2]) for i in range(0, len(raw), 4)]
-        assert len(set(points)) == width * height
-        assert all(abs(x1 - x0) + abs(y1 - y0) == 1
-                   for (x0, y0), (x1, y1) in zip(points, points[1:]))
+        assert points == [(x, y) for y in range(height) for x in range(width)]
         for i in (0, 19, width * height - 1):
             x, y = points[i]
             assert run("modify_block", "-b", "7", "-M", meta, "-p", f"{x},{y}") == str(4 * i // 7)
-    print("RGBA: exact color and alpha, continuous Hilbert traversal, and byte-based pixel lookup")
+    print("RGBA: exact color and alpha, row-major traversal, and byte-based pixel lookup")
 
 
 def test_compressed(tmp):
