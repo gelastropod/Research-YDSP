@@ -1,4 +1,0 @@
-mode,total_blocks,distinct_blocks,blocks_in_repeated_classes
-Plaintext,256,154,106
-ECB,256,154,106
-XTS,256,256,0

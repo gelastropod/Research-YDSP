@@ -1,8 +1,0 @@
-{
-  "public_seed": "fde-king-attacks-01",
-  "first_sector": 37,
-  "units": [
-    4096
-  ],
-  "checks": "round trips, independent identical rewrites, common-prefix identity, ECB/XTS equality maps"
-}

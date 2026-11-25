@@ -1,0 +1,10 @@
+scheme,sector_address,changed_blocks,first_changed_block_zero_based
+Plaintext,37,12,38
+ECB,37,12,38
+XTS,37,12,38
+BLAKE3,37,218,38
+BLAKE2s,37,218,38
+HMAC-SHA256,37,218,38
+CMAC,37,218,38
+KMAC128,37,218,38
+GHASH,37,218,38
