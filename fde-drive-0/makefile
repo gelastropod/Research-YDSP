@@ -54,16 +54,19 @@ LIB_SRCS := \
 BENCH_SRC := $(SRC_DIR)/benchmark.c
 TEST_SRC  := $(TEST_DIR)/test_fde.c
 TEST_DRIVE_SRC := $(TEST_DIR)/test_drive.c
+FILE_SRC := $(TEST_DIR)/fde_file.c
 
 LIB_OBJS   := $(patsubst %.c,$(OBJ_DIR)/%.o,$(LIB_SRCS))
 BENCH_OBJ  := $(patsubst %.c,$(OBJ_DIR)/%.o,$(BENCH_SRC))
 TEST_OBJ   := $(patsubst %.c,$(OBJ_DIR)/%.o,$(TEST_SRC))
 TEST_DRIVE_OBJ := $(patsubst %.c, $(OBJ_DIR)/%.o,$(TEST_DRIVE_SRC))
-DEPS       := $(LIB_OBJS:.o=.d) $(BENCH_OBJ:.o=.d) $(TEST_OBJ:.o=.d)
+FILE_OBJ := $(patsubst %.c, $(OBJ_DIR)/%.o,$(FILE_SRC))
+DEPS       := $(LIB_OBJS:.o=.d) $(BENCH_OBJ:.o=.d) $(TEST_OBJ:.o=.d) $(FILE_OBJ:.o=.d)
 
 BENCH_BIN := $(BUILD_DIR)/fde_bench
 TEST_BIN  := $(BUILD_DIR)/fde_test
 TEST_DRIVE_BIN := $(BUILD_DIR)/fde_test_drive
+FILE_BIN := $(BUILD_DIR)/fde_file
 
 SAN_CFLAGS  := $(CFLAGS) -O1 -fsanitize=address,undefined -fno-omit-frame-pointer
 SAN_LDFLAGS := $(LDFLAGS) -fsanitize=address,undefined
@@ -76,7 +79,7 @@ SAN_TEST_BIN  := $(SAN_BUILD_DIR)/fde_test
 
 .DEFAULT_GOAL := all
 
-.PHONY: all test test-drive test-drive-schemes sanitize sanitize-leaks clean rebuild \
+.PHONY: all test test-drive test-drive-schemes file-tool sanitize sanitize-leaks clean rebuild \
 	quick benchmark bench rq1 rq2 rq3 rq4 capture results run-all help
 
 all: $(BENCH_BIN)
@@ -121,6 +124,12 @@ $(TEST_BIN): $(TEST_OBJ) $(LIB_OBJS)
 	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 $(TEST_DRIVE_BIN): $(TEST_DRIVE_OBJ) $(LIB_OBJS)
+	@mkdir -p $(@D)
+	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+file-tool: $(FILE_BIN)
+
+$(FILE_BIN): $(FILE_OBJ) $(LIB_OBJS)
 	@mkdir -p $(@D)
 	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
@@ -177,6 +186,7 @@ help:
 		'  all (default)    Build the benchmark executable.' \
 		'  test             Build and run the correctness suite.' \
 		'  test-drive       Build the drive test (DRIVE_DEVICE=/dev/sdX to run).' \
+		'  file-tool        Build build/fde_file (encrypt/decrypt a regular file).' \
 		'  test-drive-schemes  Run the drive test for several schemes' \
 		'                    (DRIVE_SCHEMES="ecb xts ..." or all).' \
 		'  sanitize         Run AddressSanitizer and UndefinedBehaviorSanitizer.' \
