@@ -60,6 +60,17 @@ int main(int argc, char **argv)
     unsigned char *pixels = load_image(input, &width, &height, 0);
     if (!pixels)
         return EXIT_FAILURE;
+    if (!transparent) {
+        size_t count = (size_t)width * (size_t)height;
+        for (size_t i = 0; i < count; ++i) {
+            unsigned char *p = pixels + 4 * i;
+            unsigned a = p[3];
+            p[0] = 255 - ((255 - p[0]) * a + 127) / 255;
+            p[1] = 255 - ((255 - p[1]) * a + 127) / 255;
+            p[2] = 255 - ((255 - p[2]) * a + 127) / 255;
+            p[3] = 255;
+        }
+    }
 
     int horizontal = width >= height;
     uint32_t short_edge = (uint32_t)(horizontal ? height : width);
