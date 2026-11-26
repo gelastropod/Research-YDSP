@@ -1,0 +1,5 @@
+Pillow>=11.2.1,<14
+numpy>=1.26,<3
+blake3>=1,<2
+cryptography>=42
+pycryptodome>=3.20,<5

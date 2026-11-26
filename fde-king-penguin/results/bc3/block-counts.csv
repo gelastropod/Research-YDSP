@@ -1,0 +1,10 @@
+scheme,total_blocks,repeated_blocks_write_2,changed_blocks,changed_sectors
+Plaintext,256,124,12,1
+ECB,256,124,12,1
+XTS,256,0,12,1
+BLAKE3,256,0,218,1
+BLAKE2s,256,0,218,1
+HMAC-SHA256,256,0,218,1
+CMAC,256,0,218,1
+KMAC128,256,0,218,1
+GHASH,256,0,218,1
